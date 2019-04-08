@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
@@ -28,7 +26,7 @@ namespace Capston2.Controllers
             var hashedValue = hash.ToArray();
             using (SqlConnection connection = new SqlConnection(cs))
             {
-                using (SqlCommand cmd = new SqlCommand("sp_add_user", connection))
+                using (SqlCommand cmd = new SqlCommand("sp_add_account", connection))
                 {
                     try
                     {

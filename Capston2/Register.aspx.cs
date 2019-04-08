@@ -40,7 +40,7 @@ namespace Capston2
             var hashedValue = hash.ToArray();
             using (SqlConnection connection = new SqlConnection(cs))
             {
-                using (SqlCommand cmd = new SqlCommand("sp_add_user", connection))
+                using (SqlCommand cmd = new SqlCommand("sp_add_account", connection))
                 {
                     try
                     {

@@ -48,6 +48,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BuildingPostsModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BuildingPostsModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BuildingPostsModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BuildingPostsModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BuildingPostsModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BuildingPostsModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="BUILDING_POSTS.cs">
+      <DependentUpon>BuildingPostsModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserDataModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -72,6 +90,13 @@
     <None Include="App.Config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <EntityDeploy Include="BuildingPostsModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>BuildingPostsModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="BuildingPostsModel.edmx.diagram">
+      <DependentUpon>BuildingPostsModel.edmx</DependentUpon>
+    </None>
     <None Include="packages.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -84,6 +109,16 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="BuildingPostsModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>BuildingPostsModel.edmx</DependentUpon>
+      <LastGenOutput>BuildingPostsModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="BuildingPostsModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>BuildingPostsModel.edmx</DependentUpon>
+      <LastGenOutput>BuildingPostsModel.cs</LastGenOutput>
+    </Content>
     <Content Include="ConnectionStrings.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
