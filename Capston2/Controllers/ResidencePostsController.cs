@@ -27,6 +27,7 @@ namespace Capston2.Controllers
 
         public class PostModel
         {
+            public string residence { get; set; }
             public string nickname { get; set; }
             public string text { get; set; }
             public string title { get; set; }
@@ -66,6 +67,7 @@ namespace Capston2.Controllers
                     try
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@residence", SqlDbType.VarChar, 50).Value = value.residence;
                         cmd.Parameters.Add("@nickname", SqlDbType.VarChar, 50).Value = value.nickname;
                         cmd.Parameters.Add("@text", SqlDbType.VarChar).Value = value.text;
                         cmd.Parameters.Add("@title", SqlDbType.VarChar, 50).Value = value.title;

@@ -35,15 +35,6 @@ namespace Capston2.Controllers
         [HttpPost]
         public HttpResponseMessage Post(ProfileModel value)
         {
-            DateTime date;
-            if (DateTime.TryParseExact(
-                value.dateofbirth,
-                "yyyy-MM-dd",
-                CultureInfo.CurrentCulture,
-                DateTimeStyles.None, out date) == false)
-            {
-                return new HttpResponseMessage(HttpStatusCode.BadRequest);
-            }
             PasswordHash hash = new PasswordHash(value.password);
             var hashedValue = hash.ToArray();
 
@@ -59,7 +50,7 @@ namespace Capston2.Controllers
 
                         cmd.Parameters.Add("@email", SqlDbType.VarChar, 50).Value = value.email;
                         cmd.Parameters.Add("@nickname", SqlDbType.VarChar, 50).Value = value.nickname;
-                        cmd.Parameters.Add("@dateofbirth", SqlDbType.Date).Value = date;
+                        cmd.Parameters.Add("@dateofbirth", SqlDbType.VarChar, 50).Value = value.dateofbirth;
                         cmd.Parameters.Add("@residence", SqlDbType.VarChar, 50).Value = value.residence;
                         cmd.Parameters.Add("@major", SqlDbType.VarChar, 25).Value = value.major;
                         cmd.Parameters.Add("@hobby", SqlDbType.VarChar, 50).Value = value.hobby;
