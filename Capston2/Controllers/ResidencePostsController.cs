@@ -36,7 +36,7 @@ namespace Capston2.Controllers
             public string residenceName { get; set; }
         }
         [HttpGet]
-        public string Get([FromUri]GetModel value)
+        public HttpResponseMessage Get([FromUri]GetModel value)
         {
             using (Entities entities = new Entities())
             {
@@ -45,7 +45,12 @@ namespace Capston2.Controllers
                 selectedTable = selectedTable.FindAll(x => x.residence.Equals(value.residenceName));
 
                 string json = JsonConvert.SerializeObject(selectedTable.ToArray());
-                return json;
+
+                var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
+                responseMessage.Content = new StringContent(json,
+                           System.Text.Encoding.UTF8,
+                           "application/json");
+                return responseMessage;
             }
         }
         // POST api/values
@@ -99,8 +104,6 @@ namespace Capston2.Controllers
                 }
             }
 
-
-            return new HttpResponseMessage(HttpStatusCode.BadRequest);
         }
     }
 }

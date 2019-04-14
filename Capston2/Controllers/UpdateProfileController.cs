@@ -9,5 +9,15 @@ namespace Capston2.Controllers
 {
     public class UpdateProfileController : ApiController
     {
+        public class ProfileModel
+        {
+            public string residence { get; set; }
+        }
+        [HttpPost]
+        public HttpResponseMessage Post([FromBody] ProfileModel value)
+        {
+
+            return new HttpResponseMessage(HttpStatusCode.OK);
+        }
     }
 }
