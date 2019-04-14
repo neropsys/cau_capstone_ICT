@@ -67,6 +67,24 @@
       <DependentUpon>BuildingPostsModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResidencePostsModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ResidencePostsModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ResidencePostsModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ResidencePostsModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ResidencePostsModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ResidencePostsModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="RESIDENCE_POSTS.cs">
+      <DependentUpon>ResidencePostsModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="UserDataModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -104,6 +122,13 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>UserDataModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
+    <EntityDeploy Include="ResidencePostsModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>ResidencePostsModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="ResidencePostsModel.edmx.diagram">
+      <DependentUpon>ResidencePostsModel.edmx</DependentUpon>
+    </None>
     <None Include="UserDataModel.edmx.diagram">
       <DependentUpon>UserDataModel.edmx</DependentUpon>
     </None>
@@ -121,6 +146,16 @@
     </Content>
     <Content Include="ConnectionStrings.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ResidencePostsModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ResidencePostsModel.edmx</DependentUpon>
+      <LastGenOutput>ResidencePostsModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="ResidencePostsModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ResidencePostsModel.edmx</DependentUpon>
+      <LastGenOutput>ResidencePostsModel.cs</LastGenOutput>
     </Content>
     <Content Include="UserDataModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

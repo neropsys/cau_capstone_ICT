@@ -32,13 +32,21 @@ namespace Capston2.Controllers
             public string title { get; set; }
             public int buildingNumber { get; set; }
         }
-        [HttpGet]
-        public IEnumerable<BUILDING_POSTS> Get()
+        public class GetModel
         {
-            using(BuildingPostsModel entities = new BuildingPostsModel())
+            public string buildingNumber;
+        }
+        [HttpGet]
+        public string Get([FromUri]GetModel value)
+        {
+            using (BuildingPostsModel entities = new BuildingPostsModel())
             {
                 var tableValue = entities.BUILDING_POSTS;
-                return tableValue.ToList();
+                var selectedTable = tableValue.ToList();
+                selectedTable = selectedTable.FindAll(x => x.buildingnumber.Equals(value.buildingNumber));
+
+                string json = JsonConvert.SerializeObject(selectedTable.ToArray());
+                return json;
             }
         }
         // POST api/values

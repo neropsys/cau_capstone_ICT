@@ -17,8 +17,8 @@ namespace Capston2
             public string tagName { get; set; }
 
         }
-        
-           public void Hello()
+
+        public void Hello()
         {
             Clients.All.hello();
         }
@@ -32,7 +32,8 @@ namespace Capston2
                 {
 
                     var chatList = UserContainer.gChatList[roomID].Item2;
-                    string json = JsonConvert.SerializeObject(chatList); 
+                    string json = JsonConvert.SerializeObject(chatList);
+                    //json = EncodeUtf16ToUtf8.Utf16ToUtf8(json)
                     Clients.Client(fromUser.connectionID).getMessageByID(json);
 
                 }

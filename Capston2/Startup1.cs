@@ -21,7 +21,9 @@ namespace Capston2
                 var hubConfigration = new HubConfiguration
                 {
                     EnableJSONP = true,
-                    EnableJavaScriptProxies = false
+                    EnableJavaScriptProxies = false,
+                    EnableDetailedErrors=true
+                    
                 };
                 map.RunSignalR(hubConfigration);
             });
