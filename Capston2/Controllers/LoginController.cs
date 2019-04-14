@@ -10,7 +10,7 @@ using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Threading.Tasks;
 using System.Web.Http;
-
+using Capston2DataAccess;
 namespace Capston2.Controllers
 {
     public class LoginController : ApiController
@@ -70,7 +70,16 @@ namespace Capston2.Controllers
                         if (pswdHash.Verify(password))
                         {
                             var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
-                            responseMessage.Content = new ObjectContent<LoginModel>(value, new JsonMediaTypeFormatter(), "application/json");
+                            using(capston_databaseEntities entities = new capston_databaseEntities())
+                            {
+                                var tableValue = entities.USER_INFO.ToList();
+                                var userInfo = tableValue.Find(x => x.id.Equals(id));
+                                if(userInfo != null)
+                                {
+                                    responseMessage.Content = new ObjectContent<USER_INFO>(userInfo, new JsonMediaTypeFormatter(), "application/json");
+                                }
+                            }
+                            
                             return responseMessage;
                         }
                         else

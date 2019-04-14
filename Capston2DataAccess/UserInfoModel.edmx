@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="UserInfoModel_namespace.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="USER_INFO">
+          <Key>
+            <PropertyRef Name="pk_email" />
+          </Key>
+          <Property Name="pk_email" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="nickname" Type="varchar" MaxLength="50" />
+          <Property Name="dateofbirth" Type="varchar" MaxLength="50" />
+          <Property Name="residence" Type="varchar" MaxLength="50" />
+          <Property Name="major" Type="varchar" MaxLength="25" />
+          <Property Name="hobby" Type="varchar" MaxLength="50" />
+          <Property Name="id" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="point" Type="int" />
+        </EntityType>
+        <EntityContainer Name="UserInfoModel_namespaceStoreContainer">
+          <EntitySet Name="USER_INFO" EntityType="Self.USER_INFO" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="UserInfoModel_namespace" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="USER_INFO">
+          <Key>
+            <PropertyRef Name="pk_email" />
+          </Key>
+          <Property Name="pk_email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="nickname" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="dateofbirth" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="residence" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="major" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="hobby" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="point" Type="Int32" />
+        </EntityType>
+        <EntityContainer Name="capston_databaseEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="USER_INFO" EntityType="Self.USER_INFO" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="UserInfoModel_namespaceStoreContainer" CdmEntityContainer="capston_databaseEntities">
+          <EntitySetMapping Name="USER_INFO">
+            <EntityTypeMapping TypeName="UserInfoModel_namespace.USER_INFO">
+              <MappingFragment StoreEntitySet="USER_INFO">
+                <ScalarProperty Name="pk_email" ColumnName="pk_email" />
+                <ScalarProperty Name="nickname" ColumnName="nickname" />
+                <ScalarProperty Name="dateofbirth" ColumnName="dateofbirth" />
+                <ScalarProperty Name="residence" ColumnName="residence" />
+                <ScalarProperty Name="major" ColumnName="major" />
+                <ScalarProperty Name="hobby" ColumnName="hobby" />
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="point" ColumnName="point" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="없음" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

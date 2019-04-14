@@ -100,6 +100,24 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>UserDataModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="UserInfoModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UserInfoModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserInfoModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UserInfoModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserInfoModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UserInfoModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="USER_INFO.cs">
+      <DependentUpon>UserInfoModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="USER_TABLE.cs">
       <DependentUpon>UserDataModel.tt</DependentUpon>
     </Compile>
@@ -131,6 +149,13 @@
     </None>
     <None Include="UserDataModel.edmx.diagram">
       <DependentUpon>UserDataModel.edmx</DependentUpon>
+    </None>
+    <EntityDeploy Include="UserInfoModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>UserInfoModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="UserInfoModel.edmx.diagram">
+      <DependentUpon>UserInfoModel.edmx</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +191,16 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>UserDataModel.edmx</DependentUpon>
       <LastGenOutput>UserDataModel.cs</LastGenOutput>
+    </Content>
+    <Content Include="UserInfoModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>UserInfoModel.edmx</DependentUpon>
+      <LastGenOutput>UserInfoModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="UserInfoModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>UserInfoModel.edmx</DependentUpon>
+      <LastGenOutput>UserInfoModel.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <ItemGroup>
