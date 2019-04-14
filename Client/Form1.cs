@@ -28,6 +28,7 @@ namespace Client
             public string text;
             public string user;
         }
+        public 
         HubConnection connection; // Connection defination
         IHubProxy chat; // chat proxy defination
         IHubProxy groupChat; // chat proxy defination
@@ -101,7 +102,7 @@ namespace Client
                     }));
                 });
 
-                groupChat.On<string>("rightNowTags", (message) =>
+                groupChat.On<string>("updateRightNowChatList", (message) =>
                 {
                     var json_serialize = new JavaScriptSerializer();
                     List<string> tagList = json_serialize.Deserialize<List<string>>(message);
@@ -116,6 +117,18 @@ namespace Client
                     BeginInvoke(new Action(() =>
                     {
                         groupChatLog.Text += user + ":" + message + "\n"; // writing username and message on richTextBox1 
+                    }));
+                });
+
+                groupChat.On<string>("updateAvailableTags", (tagListJson) =>
+                {
+                    var json_serialize = new JavaScriptSerializer();
+                    List<string> tagList = json_serialize.Deserialize<List<string>>(tagListJson);
+
+                    BeginInvoke(new Action(() =>
+                    {
+                        this.tagList.Items.Clear();
+                        this.tagList.Items.AddRange(tagList.ToArray());
                     }));
                 });
                 connection.Start().Wait();
@@ -191,13 +204,18 @@ namespace Client
         }
         private void getRoomTagBtn_Click(object sender, EventArgs e)
         {
-            groupChat.Invoke("GetRightnowTags", user.Text.Trim());
+            groupChat.Invoke("GetRightnowRooms", user.Text.Trim());
         }
 
         private void sendToGroupBtn_Click(object sender, EventArgs e)
         {
             groupChat.Invoke("SendGroupMsg", user.Text.Trim(), groupChatTextBox.Text);
             groupChatTextBox.Text = "";
+        }
+
+        private void tagList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            rightNowStr.Text = tagList.SelectedItem.ToString();
         }
     }
 }
