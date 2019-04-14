@@ -191,7 +191,6 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\CurrentPositionPostsController.cs" />
-    <Compile Include="Controllers\RegisterController.cs" />
     <Compile Include="Controllers\UserInfoController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Controllers\VerifyController.cs" />

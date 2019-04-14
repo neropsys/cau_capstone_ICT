@@ -23,6 +23,7 @@ namespace Capston2.Controllers
             public string major { get; set; }
             public string hobby { get; set; }
             public string id { get; set; }
+            public string password { get; set; }
         }
 
         class ResponseFormat
@@ -43,6 +44,8 @@ namespace Capston2.Controllers
             {
                 return new HttpResponseMessage(HttpStatusCode.BadRequest);
             }
+            PasswordHash hash = new PasswordHash(value.password);
+            var hashedValue = hash.ToArray();
 
             //TODO:check credential
             using (SqlConnection connection = new SqlConnection(cs))
@@ -53,6 +56,7 @@ namespace Capston2.Controllers
                     {
                         
                         cmd.CommandType = CommandType.StoredProcedure;
+
                         cmd.Parameters.Add("@email", SqlDbType.VarChar, 50).Value = value.email;
                         cmd.Parameters.Add("@nickname", SqlDbType.VarChar, 50).Value = value.nickname;
                         cmd.Parameters.Add("@dateofbirth", SqlDbType.Date).Value = date;
@@ -60,6 +64,7 @@ namespace Capston2.Controllers
                         cmd.Parameters.Add("@major", SqlDbType.VarChar, 25).Value = value.major;
                         cmd.Parameters.Add("@hobby", SqlDbType.VarChar, 50).Value = value.hobby;
                         cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = value.id;
+                        cmd.Parameters.Add("@hash", SqlDbType.Binary, PasswordHash.HashSize + PasswordHash.SaltSize).Value = hashedValue;
                         var returnParameter = cmd.Parameters.Add("@result", SqlDbType.Int);
                         cmd.Parameters["@result"].Direction = ParameterDirection.Output;
                         connection.Open();
@@ -74,13 +79,19 @@ namespace Capston2.Controllers
                         {
                             //duplicate id
                             responseFormat.ret = false;
-                            responseFormat.reason = "BAD_ID";
+                            responseFormat.reason = "DUPLICATE_NICKNAME";
                         }
                         else if(retValue == -2)
                         {
                             //duplicate nickname
                             responseFormat.ret = false;
-                            responseFormat.reason = "BAD_NICKNAME";
+                            responseFormat.reason = "DUPLICATE_EMAIL";
+                        }
+                        else if(retValue == -3)
+                        {
+                            //duplicate nickname
+                            responseFormat.ret = false;
+                            responseFormat.reason = "DUPLICATE_ID";
                         }
                         else
                         {
