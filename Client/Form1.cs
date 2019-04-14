@@ -20,7 +20,7 @@ namespace Client
             public string username { get; set; }
             public string connectionID { get; set; }
             public string rightNowStr { get; set; }
-            //public List<int> belongingChatID { get; set; }//groupchat id that this user belongs(include, MeRightNow groupchat)
+            public List<int> belongingChatID { get; set; }//groupchat id that this user belongs(include, MeRightNow groupchat)
             //public Dictionary<string, int> roomIDByTargetUser { get; set; }//key:other user's name, value:chat room ID
         }
         public struct CHAT_LOG
@@ -46,6 +46,7 @@ namespace Client
             chat = connection.CreateHubProxy("ChatHub");
             try
             {
+                //called by server
                 chat.On<string>("getUserList", (message) =>
                 { // getUserList is ChatHub function
                     var json_serialize = new JavaScriptSerializer();
@@ -81,6 +82,38 @@ namespace Client
                             chatLogBox.Text += chat.user + ":" + chat.text+ "\n"; // writing username and message on richTextBox1 
                         }
                        
+                    }));
+                });
+                chat.On<string>("foundRoom", (message) =>
+                {
+                    var json_serialize = new JavaScriptSerializer();
+                    List<CHAT_LOG> chatLog = json_serialize.Deserialize<List<CHAT_LOG>>(message);
+                    BeginInvoke(new Action(() =>
+                    {
+                        groupChatLog.Clear();
+                        foreach (var chat in chatLog)
+                        {
+                            groupChatLog.Text += chat.user + ":" + chat.text + "\n"; // writing username and message on richTextBox1 
+                        }
+
+                    }));
+                });
+
+                chat.On<string>("rightNowTags", (message) =>
+                {
+                    var json_serialize = new JavaScriptSerializer();
+                    List<string> tagList = json_serialize.Deserialize<List<string>>(message);
+                    BeginInvoke(new Action(() =>
+                    {
+                        rightNowList.Items.Clear();
+                        rightNowList.Items.AddRange(tagList.ToArray());
+                    }));
+                });
+                chat.On<string, string>("onGroupChat", (user, message) =>
+                {
+                    BeginInvoke(new Action(() =>
+                    {
+                        groupChatLog.Text += user + ":" + message + "\n"; // writing username and message on richTextBox1 
                     }));
                 });
                 connection.Start().Wait();
@@ -134,9 +167,8 @@ namespace Client
         {
             if (!textbox1.Text.Trim().Equals("") && sender_message != null)
             {
-                chat.Invoke("SendMessage", textbox1.Text.Trim(), user.Text.Trim(), sender_message.username); //Send message to user
+                chat.Invoke("SendMessage", user.Text.Trim(),  sender_message.username, textbox1.Text.Trim()); //Send message to user
                 textbox1.Text = "";
-                listBox1.SelectedIndex = -1;
             }
         }
         
@@ -144,6 +176,26 @@ namespace Client
         private void getTextLogBtn_Click(object sender, EventArgs e)
         {
             chat.Invoke("GetMessageByID", user.Text.Trim(), sender_message.username);
+        }
+
+        private void createRoomBtn_Click(object sender, EventArgs e)
+        {
+            chat.Invoke("UploadTag", user.Text.Trim(), rightNowStr.Text.Trim());
+        }
+
+        private void rightNowList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            chat.Invoke("JoinRightNowRoom", user.Text.Trim(), rightNowList.SelectedItem.ToString());
+        }
+        private void getRoomTagBtn_Click(object sender, EventArgs e)
+        {
+            chat.Invoke("GetRightnowTags", user.Text.Trim());
+        }
+
+        private void sendToGroupBtn_Click(object sender, EventArgs e)
+        {
+            chat.Invoke("SendGroupMsg", user.Text.Trim(), groupChatTextBox.Text);
+            groupChatTextBox.Text = "";
         }
     }
 }

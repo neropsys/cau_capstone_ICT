@@ -44,6 +44,13 @@
             this.getTextLogBtn = new System.Windows.Forms.Button();
             this.rightNowList = new System.Windows.Forms.ListBox();
             this.label6 = new System.Windows.Forms.Label();
+            this.uploadTagBtn = new System.Windows.Forms.Button();
+            this.groupChatLog = new System.Windows.Forms.RichTextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.getRoomTagBtn = new System.Windows.Forms.Button();
+            this.label8 = new System.Windows.Forms.Label();
+            this.sendToGroupBtn = new System.Windows.Forms.Button();
+            this.groupChatTextBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // button1
@@ -75,14 +82,14 @@
             // 
             // textbox1
             // 
-            this.textbox1.Location = new System.Drawing.Point(342, 337);
+            this.textbox1.Location = new System.Drawing.Point(244, 407);
             this.textbox1.Name = "textbox1";
             this.textbox1.Size = new System.Drawing.Size(219, 21);
             this.textbox1.TabIndex = 3;
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(584, 335);
+            this.button3.Location = new System.Drawing.Point(486, 405);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 4;
@@ -102,7 +109,7 @@
             // 
             // chatLogBox
             // 
-            this.chatLogBox.Location = new System.Drawing.Point(121, 219);
+            this.chatLogBox.Location = new System.Drawing.Point(23, 289);
             this.chatLogBox.Name = "chatLogBox";
             this.chatLogBox.Size = new System.Drawing.Size(410, 112);
             this.chatLogBox.TabIndex = 6;
@@ -120,7 +127,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(274, 340);
+            this.label2.Location = new System.Drawing.Point(176, 410);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(54, 12);
             this.label2.TabIndex = 8;
@@ -129,7 +136,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(119, 204);
+            this.label3.Location = new System.Drawing.Point(21, 274);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(50, 12);
             this.label3.TabIndex = 9;
@@ -178,6 +185,7 @@
             this.rightNowList.Name = "rightNowList";
             this.rightNowList.Size = new System.Drawing.Size(120, 88);
             this.rightNowList.TabIndex = 14;
+            this.rightNowList.SelectedIndexChanged += new System.EventHandler(this.rightNowList_SelectedIndexChanged);
             // 
             // label6
             // 
@@ -188,11 +196,81 @@
             this.label6.TabIndex = 15;
             this.label6.Text = "rightNowList";
             // 
+            // uploadTagBtn
+            // 
+            this.uploadTagBtn.Location = new System.Drawing.Point(413, 34);
+            this.uploadTagBtn.Name = "uploadTagBtn";
+            this.uploadTagBtn.Size = new System.Drawing.Size(118, 23);
+            this.uploadTagBtn.TabIndex = 16;
+            this.uploadTagBtn.Text = "uploadTag";
+            this.uploadTagBtn.UseVisualStyleBackColor = true;
+            this.uploadTagBtn.Click += new System.EventHandler(this.createRoomBtn_Click);
+            // 
+            // groupChatLog
+            // 
+            this.groupChatLog.Location = new System.Drawing.Point(142, 125);
+            this.groupChatLog.Name = "groupChatLog";
+            this.groupChatLog.Size = new System.Drawing.Size(410, 112);
+            this.groupChatLog.TabIndex = 17;
+            this.groupChatLog.Text = "";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(140, 103);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(76, 12);
+            this.label7.TabIndex = 18;
+            this.label7.Text = "rigntNowLog";
+            // 
+            // getRoomTagBtn
+            // 
+            this.getRoomTagBtn.Location = new System.Drawing.Point(37, 149);
+            this.getRoomTagBtn.Name = "getRoomTagBtn";
+            this.getRoomTagBtn.Size = new System.Drawing.Size(99, 23);
+            this.getRoomTagBtn.TabIndex = 19;
+            this.getRoomTagBtn.Text = "RightnowRoom";
+            this.getRoomTagBtn.UseVisualStyleBackColor = true;
+            this.getRoomTagBtn.Click += new System.EventHandler(this.getRoomTagBtn_Click);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(122, 248);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(86, 12);
+            this.label8.TabIndex = 22;
+            this.label8.Text = "groupchatText";
+            // 
+            // sendToGroupBtn
+            // 
+            this.sendToGroupBtn.Location = new System.Drawing.Point(456, 243);
+            this.sendToGroupBtn.Name = "sendToGroupBtn";
+            this.sendToGroupBtn.Size = new System.Drawing.Size(75, 23);
+            this.sendToGroupBtn.TabIndex = 21;
+            this.sendToGroupBtn.Text = "send";
+            this.sendToGroupBtn.UseVisualStyleBackColor = true;
+            this.sendToGroupBtn.Click += new System.EventHandler(this.sendToGroupBtn_Click);
+            // 
+            // groupChatTextBox
+            // 
+            this.groupChatTextBox.Location = new System.Drawing.Point(214, 245);
+            this.groupChatTextBox.Name = "groupChatTextBox";
+            this.groupChatTextBox.Size = new System.Drawing.Size(219, 21);
+            this.groupChatTextBox.TabIndex = 20;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.sendToGroupBtn);
+            this.Controls.Add(this.groupChatTextBox);
+            this.Controls.Add(this.getRoomTagBtn);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.groupChatLog);
+            this.Controls.Add(this.uploadTagBtn);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.rightNowList);
             this.Controls.Add(this.getTextLogBtn);
@@ -234,6 +312,13 @@
         private System.Windows.Forms.ListBox rightNowList;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.RichTextBox chatLogBox;
+        private System.Windows.Forms.Button uploadTagBtn;
+        private System.Windows.Forms.RichTextBox groupChatLog;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button getRoomTagBtn;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button sendToGroupBtn;
+        private System.Windows.Forms.TextBox groupChatTextBox;
     }
 }
 
