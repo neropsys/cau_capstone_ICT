@@ -30,6 +30,7 @@ namespace Client
         }
         HubConnection connection; // Connection defination
         IHubProxy chat; // chat proxy defination
+        IHubProxy groupChat; // chat proxy defination
         List<Users> users = null; // user list
         Users sender_message = null; // sender message in user
         public Form1()
@@ -44,6 +45,7 @@ namespace Client
             connection.Headers.Add("username", userName);
             connection.Headers.Add("rightNowStr", rightNowStr);
             chat = connection.CreateHubProxy("ChatHub");
+            groupChat = connection.CreateHubProxy("GroupChatHub");
             try
             {
                 //called by server
@@ -84,7 +86,7 @@ namespace Client
                        
                     }));
                 });
-                chat.On<string>("foundRoom", (message) =>
+                groupChat.On<string>("foundRoom", (message) =>
                 {
                     var json_serialize = new JavaScriptSerializer();
                     List<CHAT_LOG> chatLog = json_serialize.Deserialize<List<CHAT_LOG>>(message);
@@ -99,7 +101,7 @@ namespace Client
                     }));
                 });
 
-                chat.On<string>("rightNowTags", (message) =>
+                groupChat.On<string>("rightNowTags", (message) =>
                 {
                     var json_serialize = new JavaScriptSerializer();
                     List<string> tagList = json_serialize.Deserialize<List<string>>(message);
@@ -109,7 +111,7 @@ namespace Client
                         rightNowList.Items.AddRange(tagList.ToArray());
                     }));
                 });
-                chat.On<string, string>("onGroupChat", (user, message) =>
+                groupChat.On<string, string>("onGroupChat", (user, message) =>
                 {
                     BeginInvoke(new Action(() =>
                     {
@@ -180,21 +182,21 @@ namespace Client
 
         private void createRoomBtn_Click(object sender, EventArgs e)
         {
-            chat.Invoke("UploadTag", user.Text.Trim(), rightNowStr.Text.Trim());
+            groupChat.Invoke("UploadTag", user.Text.Trim(), rightNowStr.Text.Trim());
         }
 
         private void rightNowList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            chat.Invoke("JoinRightNowRoom", user.Text.Trim(), rightNowList.SelectedItem.ToString());
+            groupChat.Invoke("JoinRightNowRoom", user.Text.Trim(), rightNowList.SelectedItem.ToString());
         }
         private void getRoomTagBtn_Click(object sender, EventArgs e)
         {
-            chat.Invoke("GetRightnowTags", user.Text.Trim());
+            groupChat.Invoke("GetRightnowTags", user.Text.Trim());
         }
 
         private void sendToGroupBtn_Click(object sender, EventArgs e)
         {
-            chat.Invoke("SendGroupMsg", user.Text.Trim(), groupChatTextBox.Text);
+            groupChat.Invoke("SendGroupMsg", user.Text.Trim(), groupChatTextBox.Text);
             groupChatTextBox.Text = "";
         }
     }

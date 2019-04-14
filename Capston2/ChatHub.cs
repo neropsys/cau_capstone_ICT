@@ -8,92 +8,30 @@ using Newtonsoft.Json;
 
 namespace Capston2
 {
-
-    public class TwoKeyDictionary<K1, K2, V> :
-        Dictionary<K1, Dictionary<K2, V>>
-    {
-        public V this[K1 key1, K2 key2]
-        {
-            get
-            {
-                if (!ContainsKey(key1) || !this[key1].ContainsKey(key2))
-                    throw new ArgumentOutOfRangeException();
-                return base[key1][key2];
-            }
-            set
-            {
-                if (!ContainsKey(key1))
-                    this[key1] = new Dictionary<K2, V>();
-                this[key1][key2] = value;
-            }
-        }
-        public void Add(K1 key1, K2 key2, V value)
-        {
-            if (!ContainsKey(key1))
-                this[key1] = new Dictionary<K2, V>();
-            this[key1][key2] = value;
-        }
-        public bool ContainsKey(K1 key1, K2 key2)
-        {
-            return base.ContainsKey(key1) && this[key1].ContainsKey(key2);
-        }
-        public new IEnumerable<V> Values
-        {
-            get
-            {
-                return from baseDict in base.Values
-                       from baseKey in baseDict.Keys
-                       select baseDict[baseKey];
-            }
-        }
-    }
     public class ChatHub : Hub
     {
-        const int MIN_MEMBER_FOR_GROUPCHAT = 2;
-        struct ChatLog
-        {
-            string text { get; set; }
-            string time { get; set; }
-        }
-        public class Users
-        {
-            public string username { get; set; }
-            public string connectionID { get; set; }
-            public string rightNowStr { get; set; }
-            public List<int> belongingChatID { get; set; }//MeRightNow or other group chats
-            public Dictionary<string, int> roomIDByTargetUser { get; set; }//key:other user's name, value:chat room ID. 2 users have each other's name as key, and value is same
-        }
 
-        
         public class RightNow
         {
             public List<Users> users { get; set; }
             public string tagName { get; set; }
 
         }
-        public struct CHAT_LOG
-        {
-            public string text;
-            public string user;
-        }
-        //key: id, value: Item1: User List, Item2:Chat log
-        public static Dictionary<int, Tuple<List<Users>, List<CHAT_LOG>>> gChatList = new Dictionary<int, Tuple<List<Users>, List<CHAT_LOG>>>();
-        public static Dictionary<string, int> gRightNowRoomID = new Dictionary<string, int>();//key:RightNow tag string, value:room ID
-        public static List<Users> gUserList = new List<Users>();
-        public void Hello()
+        
+           public void Hello()
         {
             Clients.All.hello();
         }
         public void GetMessageByID(string fromUserID, string targetUserID)
         {
-            Users fromUser = gUserList.Where(x => x.username.Equals(fromUserID)).FirstOrDefault();
+            Users fromUser = UserContainer.gUserList.Where(x => x.username.Equals(fromUserID)).FirstOrDefault();
             if (fromUser != null)
             {
                 int roomID = 0;
                 if(fromUser.roomIDByTargetUser.TryGetValue(targetUserID, out roomID) == true)
                 {
 
-                    var chatList = gChatList[roomID].Item2;
+                    var chatList = UserContainer.gChatList[roomID].Item2;
                     string json = JsonConvert.SerializeObject(chatList); 
                     Clients.Client(fromUser.connectionID).getMessageByID(json);
 
@@ -101,12 +39,11 @@ namespace Capston2
             }
         }
 
-        static int globalChatRoomId = 0;
 
         public void CreateChat(string fromUser, string toUser)
         {
-            var currentUser = gUserList.Find(x => x.username.Equals(fromUser));
-            var targetUser = gUserList.Find(x => x.username.Equals(toUser));
+            var currentUser = UserContainer.gUserList.Find(x => x.username.Equals(fromUser));
+            var targetUser = UserContainer.gUserList.Find(x => x.username.Equals(toUser));
             if (currentUser == null || targetUser == null)
             {
                 //requesting user does not exist or target user does not exist
@@ -122,12 +59,12 @@ namespace Capston2
                 userList.Add(targetUser);
 
                
-                currentUser.roomIDByTargetUser.Add(toUser, globalChatRoomId);
-                targetUser.roomIDByTargetUser.Add(fromUser, globalChatRoomId);
+                currentUser.roomIDByTargetUser.Add(toUser, RoomID.globalChatRoomId);
+                targetUser.roomIDByTargetUser.Add(fromUser, RoomID.globalChatRoomId);
 
-                gChatList.Add(globalChatRoomId, Tuple.Create( userList, new List<CHAT_LOG>()));
+                UserContainer.gChatList.Add(RoomID.globalChatRoomId, Tuple.Create( userList, new List<CHAT_LOG>()));
 
-                globalChatRoomId++;
+                RoomID.globalChatRoomId++;
             }
         }
 
@@ -136,8 +73,8 @@ namespace Capston2
         {
             var sender_connectionID = Context.ConnectionId;
 
-            var fromUserInfo = gUserList.Find(x => x.username.Equals(fromUser));
-            var targetUser = gUserList.Find(x => x.username.Equals(toUser));
+            var fromUserInfo = UserContainer.gUserList.Find(x => x.username.Equals(fromUser));
+            var targetUser = UserContainer.gUserList.Find(x => x.username.Equals(toUser));
 
             if(fromUser == null || targetUser == null)
             {//either user does not exist
@@ -154,112 +91,15 @@ namespace Capston2
             chatLog.user = fromUserInfo.username;
             chatLog.text = message;
 
-            gChatList[chatRoomID].Item2.Add(chatLog);
+            UserContainer.gChatList[chatRoomID].Item2.Add(chatLog);
 
-            foreach (var userInfo in gChatList[chatRoomID].Item1)
+            foreach (var userInfo in UserContainer.gChatList[chatRoomID].Item1)
             {
                 Clients.Client(userInfo.connectionID).sendMessage(message, fromUserInfo.username);
             }
 
         }
-        public void SendGroupMsg(string fromUser, string msg)
-        {
-            var fromUserInfo = gUserList.Find(x => x.username.Equals(fromUser));
-            if (fromUserInfo == null)
-                return;
-
-            var roomId = 0;
-            if(gRightNowRoomID.TryGetValue(fromUserInfo.rightNowStr, out roomId) == false)
-            {
-                return;
-            }
-            var roomInfo = gChatList[roomId];
-            roomInfo.Item2.Add(new CHAT_LOG { text = msg, user = fromUserInfo.username });
-            foreach(var userInfo in roomInfo.Item1)
-            {
-                Clients.Client(userInfo.connectionID).onGroupChat(fromUserInfo.username, msg);
-            }
-        }
-        public void UploadTag(string fromUser, string keyword)
-        {
-            var fromUserInfo = gUserList.Find(x => x.username.Equals(fromUser));
-            if (fromUserInfo == null)
-                return;
-
-            fromUserInfo.rightNowStr = keyword;
-
-            var userListWithSameTag = gUserList.FindAll(x => x.rightNowStr.Equals(keyword));
-
-            if (userListWithSameTag.Count < MIN_MEMBER_FOR_GROUPCHAT)
-            {
-                //show only chat rooms
-
-
-                //Clients.All.rightNowTags
-                return;
-            }
-
-            int chatID = 0;
-            if(gRightNowRoomID.TryGetValue(keyword, out chatID) == false)
-            {
-                //crate room
-                gChatList.Add(globalChatRoomId, Tuple.Create(userListWithSameTag, new List<CHAT_LOG>()));
-                gRightNowRoomID.Add(keyword, globalChatRoomId);
-                foreach (var userInfo in userListWithSameTag)
-                {
-                    userInfo.belongingChatID.Add(globalChatRoomId);
-                }
-                globalChatRoomId++;
-
-                //notify all people that the room has been created
-                foreach (var userInfo in userListWithSameTag)
-                {
-                    string json = JsonConvert.SerializeObject(gRightNowRoomID.Keys.ToArray());
-                    Clients.Client(userInfo.connectionID).rightNowTags(json);
-                }
-                return;
-            }
-            chatID = gRightNowRoomID[keyword];
-
-            var roomInfo = gChatList[chatID];
-            roomInfo.Item1.Add(fromUserInfo);
-
-            fromUserInfo.belongingChatID.Add(globalChatRoomId);
-
-            //let user join room & send all log in the room
-            string chatLog = JsonConvert.SerializeObject(roomInfo.Item2);
-            Clients.Client(fromUserInfo.connectionID).foundRoom(chatLog);
-        }
-
-        public void GetRightnowTags(string fromUser)
-        {
-            var fromUserInfo = gUserList.Find(x => x.username.Equals(fromUser));
-            if (fromUserInfo == null)
-                return;
-
-            var keys = gRightNowRoomID.Keys.ToList();
-            string json = JsonConvert.SerializeObject(keys);
-            Clients.Client(fromUserInfo.connectionID).rightNowTags(json);
-        }
-
-
-        void JoinRightNowRoom(string fromUser, string roomName)
-        {
-            var fromUserInfo = gUserList.Find(x => x.username.Equals(fromUser));
-            if (fromUserInfo == null)
-                return;
-            fromUserInfo.rightNowStr = roomName;
-            //room has already been created
-            int roomID = 0;
-            if(gRightNowRoomID.TryGetValue(roomName, out roomID))
-            {
-                var roomInfo = gChatList[roomID];
-                string chatLog = JsonConvert.SerializeObject(roomInfo.Item2);
-                Clients.Client(fromUserInfo.connectionID).foundRoom(chatLog);
-
-            }
-        }
-
+        
         public override Task OnConnected()
         {
             var connectionID = Context.ConnectionId;
@@ -277,19 +117,19 @@ namespace Capston2
                 belongingChatID = new List<int>(),
                 roomIDByTargetUser = new Dictionary<string, int>()
             };
-            gUserList.Add(user); //add the connection user to the list
-            string json = JsonConvert.SerializeObject(gUserList); //send to client
+            UserContainer.gUserList.Add(user); //add the connection user to the list
+            string json = JsonConvert.SerializeObject(UserContainer.gUserList); //send to client
             Clients.All.getUserList(json);
             return base.OnConnected();
         }
         public override Task OnDisconnected(bool stopCalled)
         {
             var connectionID = Context.ConnectionId;
-            Users user = gUserList.Where(x => x.connectionID.Equals(connectionID)).FirstOrDefault();
+            Users user = UserContainer.gUserList.Where(x => x.connectionID.Equals(connectionID)).FirstOrDefault();
             if (user != null)
             {
-                gUserList.Remove(user); //in the case of connection termination we removed the user from the list
-                string json = JsonConvert.SerializeObject(gUserList); //send to client
+                UserContainer.gUserList.Remove(user); //in the case of connection termination we removed the user from the list
+                string json = JsonConvert.SerializeObject(UserContainer.gUserList); //send to client
                 Clients.All.getUserList(json);
             }
             return base.OnDisconnected(stopCalled);
