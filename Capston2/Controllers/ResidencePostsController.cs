@@ -98,9 +98,10 @@ namespace Capston2.Controllers
                     catch (Exception ex)
                     {
                         string exceptionValue = ex.Message;
-                        exceptionValue += "zz";
                         connection.Close();
-                        return new HttpResponseMessage(HttpStatusCode.InternalServerError);
+                        var retMsg = new HttpResponseMessage(HttpStatusCode.OK);
+                        retMsg.Content = new StringContent(ex.Message);
+                        return retMsg;
 
                     }
                 }
