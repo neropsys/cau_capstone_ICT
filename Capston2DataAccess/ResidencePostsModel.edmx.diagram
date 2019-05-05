@@ -5,7 +5,7 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="9f68a22248944ee6a362b79b33f4dd7b" Name="Diagram1">
-        <EntityTypeShape EntityType="Residence_Model.RESIDENCE_POSTS" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Residence_Model.RESIDENCE_POSTS" Width="2" PointX="0.75" PointY="0.75" IsExpanded="true" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

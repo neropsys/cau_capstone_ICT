@@ -69,6 +69,7 @@ namespace Client
         {
             public string text;
             public string user;
+            public int index;
         }
         public 
         HubConnection connection; // Connection defination
@@ -126,7 +127,7 @@ namespace Client
                         chatLogBox.Clear();
                         foreach(var chat in chatLog)
                         {
-                            chatLogBox.Text += chat.user + ":" + chat.text+ "\n"; // writing username and message on richTextBox1 
+                            chatLogBox.Text += chat.user + ":" + chat.text + "/ index:" + chat.index + "\n"; // writing username and message on richTextBox1 
                         }
                        
                     }));
@@ -140,12 +141,25 @@ namespace Client
                         groupChatLog.Clear();
                         foreach (var chat in chatLog)
                         {
-                            groupChatLog.Text += chat.user + ":" + chat.text + "\n"; // writing username and message on richTextBox1 
+                            groupChatLog.Text += chat.user + ":" + chat.text + "/ index:" + chat.index + "\n"; // writing username and message on richTextBox1 
                         }
 
                     }));
                 });
+                groupChat.On<string, string>("updateGroupChatByIndex", (roomTag, message) =>
+                {
+                    var json_serialize = new JavaScriptSerializer();
+                    List<CHAT_LOG> chatLog = json_serialize.Deserialize<List<CHAT_LOG>>(message);
+                    BeginInvoke(new Action(() =>
+                    {
+                        groupChatLog.Clear();
+                        foreach (var chat in chatLog)
+                        {
+                            groupChatLog.Text += chat.user + ":" + chat.text + "/ index:" + chat.index + "\n"; // writing username and message on richTextBox1 
+                        }
 
+                    }));
+                });
                 groupChat.On<string>("updateRightNowChatList", (message) =>
                 {
                     var json_serialize = new JavaScriptSerializer();
@@ -260,6 +274,16 @@ namespace Client
         private void tagList_SelectedIndexChanged(object sender, EventArgs e)
         {
             rightNowStr.Text = tagList.SelectedItem.ToString();
+        }
+
+        private void getChatFrom0_Click(object sender, EventArgs e)
+        {
+            groupChat.Invoke("GetRightnowMessageByIndex", user.Text.Trim(), rightNowList.SelectedItem.ToString() , 0);
+        }
+
+        private void getTagButton_Click(object sender, EventArgs e)
+        {
+            groupChat.Invoke("BroadcastTagList");
         }
     }
 }

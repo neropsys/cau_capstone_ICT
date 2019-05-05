@@ -17,6 +17,7 @@ namespace Capston2
     {
         public string text;
         public string user;
+        public int index;
     }
     public static class RoomID
     {

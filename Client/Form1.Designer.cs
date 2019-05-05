@@ -53,6 +53,8 @@
             this.groupChatTextBox = new System.Windows.Forms.TextBox();
             this.tagList = new System.Windows.Forms.ListBox();
             this.label9 = new System.Windows.Forms.Label();
+            this.getChatFrom0 = new System.Windows.Forms.Button();
+            this.getTagButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -280,11 +282,33 @@
             this.label9.TabIndex = 24;
             this.label9.Text = "지금나는태그 리스트";
             // 
+            // getChatFrom0
+            // 
+            this.getChatFrom0.Location = new System.Drawing.Point(11, 178);
+            this.getChatFrom0.Name = "getChatFrom0";
+            this.getChatFrom0.Size = new System.Drawing.Size(125, 41);
+            this.getChatFrom0.TabIndex = 25;
+            this.getChatFrom0.Text = "유저챗인덱스0부터 겟";
+            this.getChatFrom0.UseVisualStyleBackColor = true;
+            this.getChatFrom0.Click += new System.EventHandler(this.getChatFrom0_Click);
+            // 
+            // getTagButton
+            // 
+            this.getTagButton.Location = new System.Drawing.Point(456, 309);
+            this.getTagButton.Name = "getTagButton";
+            this.getTagButton.Size = new System.Drawing.Size(75, 23);
+            this.getTagButton.TabIndex = 26;
+            this.getTagButton.Text = "getTag";
+            this.getTagButton.UseVisualStyleBackColor = true;
+            this.getTagButton.Click += new System.EventHandler(this.getTagButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.getTagButton);
+            this.Controls.Add(this.getChatFrom0);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.tagList);
             this.Controls.Add(this.label8);
@@ -344,6 +368,8 @@
         private System.Windows.Forms.TextBox groupChatTextBox;
         private System.Windows.Forms.ListBox tagList;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Button getChatFrom0;
+        private System.Windows.Forms.Button getTagButton;
     }
 }
 

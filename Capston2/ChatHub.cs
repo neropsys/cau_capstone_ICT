@@ -91,7 +91,7 @@ namespace Capston2
             var chatLog = new CHAT_LOG();
             chatLog.user = fromUserInfo.username;
             chatLog.text = message;
-
+            chatLog.index = UserContainer.gChatList[chatRoomID].Item2.Count;
             UserContainer.gChatList[chatRoomID].Item2.Add(chatLog);
 
             foreach (var userInfo in UserContainer.gChatList[chatRoomID].Item1)
