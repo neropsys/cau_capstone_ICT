@@ -40,6 +40,23 @@ namespace Capston2
             }
         }
 
+        public void GetMessageByIndex(string fromUser, string targetUserID, int chatIndex)
+        {
+            var fromUserInfo = UserContainer.gUserList.Find(x => x.username.Equals(fromUser));
+            if (fromUserInfo == null)
+                return;
+
+            if (fromUserInfo.roomIDByTargetUser.TryGetValue(targetUserID, out int roomID) == true)
+            {
+                var chatLog = UserContainer.gChatList[roomID].Item2;
+
+                var slicedChatList = chatLog.Skip(chatIndex).ToList();
+                string json = JsonConvert.SerializeObject(slicedChatList);
+
+                Clients.Client(fromUserInfo.connectionID).updateChatByIndex(json);
+            }
+
+        }
 
         public void CreateChat(string fromUser, string toUser)
         {
@@ -100,7 +117,7 @@ namespace Capston2
             }
 
         }
-        
+
         public override Task OnConnected()
         {
             var connectionID = Context.ConnectionId;

@@ -186,12 +186,13 @@ namespace Capston2.Controllers
         [Route("api/{userId}/friend/add")]
         public HttpResponseMessage AddFriend(string userId, [FromBody]AddFriendFormat value)
         {
+            ResponseFormat responseFormat = new ResponseFormat();
             using (capston_databaseEntities userDataEntities = new capston_databaseEntities())
             {
                 var userDataTable = userDataEntities.USER_INFO.ToList();
                 if (userDataTable.Exists(x => x.nickname.Equals(value.receiverNick)) == false)
                 {
-                    ResponseFormat responseFormat = new ResponseFormat();
+
                     responseFormat.ret = false;
                     responseFormat.reason = "RECV_ID_NOT_FOUND";
                     var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
@@ -203,6 +204,24 @@ namespace Capston2.Controllers
                     return responseMessage;
                 }
                 string receiverID = userDataTable.Find(x => x.nickname.Equals(value.receiverNick)).id;
+
+                using(FriendTableEntities friendTableEntities = new FriendTableEntities())
+                {
+                    var friendTable = friendTableEntities.FRIEND.ToList();
+
+                    if(friendTable.Exists(x => x.friend1.Equals(userId) && x.friend2.Equals(receiverID)))
+                    {
+                        responseFormat.ret = false;
+                        responseFormat.reason = "DUPLICATE_REQUEST";
+                        var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
+
+                        string jsonContent = JsonConvert.SerializeObject(responseFormat);
+                        responseMessage.Content = new StringContent(jsonContent,
+                             System.Text.Encoding.UTF8,
+                             "application/json");
+                        return responseMessage;
+                    }
+                }
 
                 using (SqlConnection connection = new SqlConnection(cs))
                 {
@@ -230,7 +249,6 @@ namespace Capston2.Controllers
                                 return new HttpResponseMessage(HttpStatusCode.BadRequest);
                                 //sender id not found. return
                             }
-                            ResponseFormat responseFormat = new ResponseFormat();
                             switch (retValue)
                             {
                                 case 0://successful
