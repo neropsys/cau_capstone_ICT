@@ -21,21 +21,32 @@ namespace Capston2.Controllers
         [Route("api/{userId}/friends")]
         public string GetFriend(string userId)
         {
-            using (FriendTableEntities entities = new FriendTableEntities())
+            using (capston_databaseEntities userDataEntities = new capston_databaseEntities())
             {
-                var tableValue = entities.FRIEND;
-                var selectedTable = tableValue.ToList();
-                selectedTable = selectedTable.FindAll(x => 
-                (x.friend1.Equals(userId) || x.friend2.Equals(userId)) &&
-                x.type != null
-                );
-                List<string> ret = new List<string>();
-                foreach (var friendData in selectedTable)
+                var userDataTable = userDataEntities.USER_INFO.ToList();
+                using (FriendTableEntities entities = new FriendTableEntities())
                 {
-                    ret.Add(friendData.friend1.Equals(userId) ? friendData.friend2 : friendData.friend1);
+                    var tableValue = entities.FRIEND;
+                    var selectedTable = tableValue.ToList();
+                    selectedTable = selectedTable.FindAll(x =>
+                    (x.friend1.Equals(userId) || x.friend2.Equals(userId)) &&
+                    x.type != null
+                    );
+                    List<string> ret = new List<string>();
+                    foreach (var friendData in selectedTable)
+                    {
+
+                        string targetFriendID = friendData.friend1.Equals(userId) ? friendData.friend2 : friendData.friend1;
+
+                        if (userDataTable.Exists(x => x.id.Equals(targetFriendID)))
+                        {
+                            var friendNickname = userDataTable.Find(x => x.id.Equals(targetFriendID));
+                            ret.Add(friendNickname.nickname);
+                        }
+                    }
+                    string json = JsonConvert.SerializeObject(selectedTable.ToArray());
+                    return json;
                 }
-                string json = JsonConvert.SerializeObject(selectedTable.ToArray());
-                return json;
             }
         }
 
@@ -44,33 +55,41 @@ namespace Capston2.Controllers
         [Route("api/{userId}/friend/requests")]
         public string GetRequests(string userId)
         {
-
-            using (FriendTableEntities entities = new FriendTableEntities())
+            using (capston_databaseEntities userDataEntities = new capston_databaseEntities())
             {
-                var tableValue = entities.FRIEND;
-                var selectedTable = tableValue.ToList();
-                selectedTable = selectedTable.FindAll(x => x.type.HasValue == false && x.friend2.Equals(userId));
-                List<string> ret = new List<string>();
-                foreach(var friendData in selectedTable)
+                var userDataTable = userDataEntities.USER_INFO.ToList();
+
+                using (FriendTableEntities entities = new FriendTableEntities())
                 {
-                    ret.Add(friendData.friend1);
+                    var tableValue = entities.FRIEND;
+                    var selectedTable = tableValue.ToList();
+                    selectedTable = selectedTable.FindAll(x => x.type.HasValue == false && x.friend2.Equals(userId));
+                    List<string> ret = new List<string>();
+                    foreach (var friendData in selectedTable)
+                    {
+                        if (userDataTable.Exists(x => x.id.Equals(friendData.friend1)))
+                        {
+                            var senderInfo = userDataTable.Find(x => x.id.Equals(friendData.friend1));
+                            ret.Add(senderInfo.nickname);
+                        }
+                    }
+                    string json = JsonConvert.SerializeObject(ret);
+                    return json;
                 }
-                string json = JsonConvert.SerializeObject(ret);
-                return json;
             }
         }
 
         public class UpdateFormat
         {
             public string senderId { get; set; }
-            public string receiverId { get; set; }
+            public string receiverNick { get; set; }
             public int type { get; set; }
         }
 
         public class AddFriendFormat
         {
             public string senderId { get; set; }
-            public string receiverId { get; set; }
+            public string receiverNick { get; set; }
             public string friendType { get; set; }
         }
         class ResponseFormat
@@ -97,40 +116,14 @@ namespace Capston2.Controllers
             {
                 return new HttpResponseMessage(HttpStatusCode.BadRequest);
             }
-            
-            using (SqlConnection connection = new SqlConnection(cs))
+            using (capston_databaseEntities userDataEntities = new capston_databaseEntities())
             {
-                using (SqlCommand cmd = new SqlCommand("sp_update_friend", connection))
+                var userDataTable = userDataEntities.USER_INFO.ToList();
+                if(userDataTable.Exists(x => x.nickname.Equals(response.receiverNick)) == false)
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add("@friend1Id", SqlDbType.VarChar, 50).Value = response.senderId;
-                    cmd.Parameters.Add("@friend2Id", SqlDbType.VarChar).Value = response.receiverId;
-                    cmd.Parameters.Add("@type", SqlDbType.Int).Value = response.type;
-                    var returnParameter = cmd.Parameters.Add("@result", SqlDbType.Int);
-                    cmd.Parameters["@result"].Direction = ParameterDirection.Output;
-                    connection.Open();
-                    cmd.ExecuteNonQuery();
-                    int retValue = (int)returnParameter.Value;
-                    connection.Close();
-
-
-                    if (retValue == -1)
-                    {
-                        return new HttpResponseMessage(HttpStatusCode.BadRequest);
-                        //sender id not found. return
-                    }
                     ResponseFormat responseFormat = new ResponseFormat();
-                    switch (retValue)
-                    {
-                        case 0://successful
-                            responseFormat.ret = true;
-                            //TODO: push notification to receiver
-                            break;
-                        case -2://receiver id not found. 
-                            responseFormat.ret = false;
-                            responseFormat.reason = "RECV_ID_NOT_FOUND";
-                            break;
-                    }
+                    responseFormat.ret = false;
+                    responseFormat.reason = "RECV_ID_NOT_FOUND";
                     var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
 
                     string jsonContent = JsonConvert.SerializeObject(responseFormat);
@@ -139,36 +132,25 @@ namespace Capston2.Controllers
                          "application/json");
                     return responseMessage;
                 }
-            }
-        }
-
-        //send friend request
-        [HttpPost]
-        [Route("api/{userId}/friend/add")]
-        public HttpResponseMessage AddFriend(string userId, [FromBody]AddFriendFormat value)
-        {
-            using (SqlConnection connection = new SqlConnection(cs))
-            {
-                using (SqlCommand cmd = new SqlCommand("sp_add_friend", connection))
+            
+                string receiverID = userDataTable.Find(x => x.nickname.Equals(response.receiverNick)).id;
+                using (SqlConnection connection = new SqlConnection(cs))
                 {
-                    try
+                    using (SqlCommand cmd = new SqlCommand("sp_update_friend", connection))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.Add("@friend1Id", SqlDbType.VarChar, 50).Value = value.senderId;
-                        cmd.Parameters.Add("@friend2Id", SqlDbType.VarChar).Value = value.receiverId;
-                        if(value.friendType == "NFC")
-                        {
-                            cmd.Parameters.Add("@type", SqlDbType.Int).Value = 2;
-                        }
+                        cmd.Parameters.Add("@friend1Id", SqlDbType.VarChar, 50).Value = response.senderId;
+                        cmd.Parameters.Add("@friend2Id", SqlDbType.VarChar).Value = receiverID;
+                        cmd.Parameters.Add("@type", SqlDbType.Int).Value = response.type;
                         var returnParameter = cmd.Parameters.Add("@result", SqlDbType.Int);
                         cmd.Parameters["@result"].Direction = ParameterDirection.Output;
-
                         connection.Open();
                         cmd.ExecuteNonQuery();
                         int retValue = (int)returnParameter.Value;
                         connection.Close();
 
-                        if(retValue == -1)
+
+                        if (retValue == -1)
                         {
                             return new HttpResponseMessage(HttpStatusCode.BadRequest);
                             //sender id not found. return
@@ -192,19 +174,94 @@ namespace Capston2.Controllers
                              System.Text.Encoding.UTF8,
                              "application/json");
                         return responseMessage;
-
                     }
-                    catch (Exception ex)
+                }
+
+            }
+
+        }
+
+        //send friend request
+        [HttpPost]
+        [Route("api/{userId}/friend/add")]
+        public HttpResponseMessage AddFriend(string userId, [FromBody]AddFriendFormat value)
+        {
+            using (capston_databaseEntities userDataEntities = new capston_databaseEntities())
+            {
+                var userDataTable = userDataEntities.USER_INFO.ToList();
+                if (userDataTable.Exists(x => x.nickname.Equals(value.receiverNick)) == false)
+                {
+                    ResponseFormat responseFormat = new ResponseFormat();
+                    responseFormat.ret = false;
+                    responseFormat.reason = "RECV_ID_NOT_FOUND";
+                    var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
+
+                    string jsonContent = JsonConvert.SerializeObject(responseFormat);
+                    responseMessage.Content = new StringContent(jsonContent,
+                         System.Text.Encoding.UTF8,
+                         "application/json");
+                    return responseMessage;
+                }
+                string receiverID = userDataTable.Find(x => x.nickname.Equals(value.receiverNick)).id;
+
+                using (SqlConnection connection = new SqlConnection(cs))
+                {
+                    using (SqlCommand cmd = new SqlCommand("sp_add_friend", connection))
                     {
-                        string exceptionValue = ex.Message;
-                        connection.Close();
-                        var retMsg = new HttpResponseMessage(HttpStatusCode.OK);
-                        retMsg.Content = new StringContent(ex.Message);
-                        return retMsg;
+                        try
+                        {
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.Add("@friend1Id", SqlDbType.VarChar, 50).Value = value.senderId;
+                            cmd.Parameters.Add("@friend2Id", SqlDbType.VarChar).Value = receiverID;
+                            if (value.friendType == "NFC")
+                            {
+                                cmd.Parameters.Add("@type", SqlDbType.Int).Value = 2;
+                            }
+                            var returnParameter = cmd.Parameters.Add("@result", SqlDbType.Int);
+                            cmd.Parameters["@result"].Direction = ParameterDirection.Output;
+
+                            connection.Open();
+                            cmd.ExecuteNonQuery();
+                            int retValue = (int)returnParameter.Value;
+                            connection.Close();
+
+                            if (retValue == -1)
+                            {
+                                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+                                //sender id not found. return
+                            }
+                            ResponseFormat responseFormat = new ResponseFormat();
+                            switch (retValue)
+                            {
+                                case 0://successful
+                                    responseFormat.ret = true;
+                                    //TODO: push notification to receiver
+                                    break;
+                                case -2://receiver id not found. 
+                                    responseFormat.ret = false;
+                                    responseFormat.reason = "RECV_ID_NOT_FOUND";
+                                    break;
+                            }
+                            var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
+
+                            string jsonContent = JsonConvert.SerializeObject(responseFormat);
+                            responseMessage.Content = new StringContent(jsonContent,
+                                 System.Text.Encoding.UTF8,
+                                 "application/json");
+                            return responseMessage;
+
+                        }
+                        catch (Exception ex)
+                        {
+                            string exceptionValue = ex.Message;
+                            connection.Close();
+                            var retMsg = new HttpResponseMessage(HttpStatusCode.OK);
+                            retMsg.Content = new StringContent(ex.Message);
+                            return retMsg;
+                        }
                     }
                 }
             }
-            
         }
     }
 }
