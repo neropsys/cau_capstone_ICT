@@ -44,7 +44,7 @@ namespace Capston2.Controllers
                             ret.Add(friendNickname.nickname);
                         }
                     }
-                    string json = JsonConvert.SerializeObject(selectedTable.ToArray());
+                    string json = JsonConvert.SerializeObject(ret.ToArray());
                     return json;
                 }
             }
