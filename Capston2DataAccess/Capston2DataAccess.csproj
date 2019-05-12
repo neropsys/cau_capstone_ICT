@@ -66,6 +66,24 @@
     <Compile Include="BUILDING_POSTS.cs">
       <DependentUpon>BuildingPostsModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="CALENDER.cs">
+      <DependentUpon>CalenderModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CalenderModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CalenderModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CalenderModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CalenderModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CalenderModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CalenderModel.edmx</DependentUpon>
+    </Compile>
     <Compile Include="FRIEND.cs">
       <DependentUpon>FriendModel.tt</DependentUpon>
     </Compile>
@@ -156,6 +174,13 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>FriendModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
+    <EntityDeploy Include="CalenderModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>CalenderModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="CalenderModel.edmx.diagram">
+      <DependentUpon>CalenderModel.edmx</DependentUpon>
+    </None>
     <None Include="FriendModel.edmx.diagram">
       <DependentUpon>FriendModel.edmx</DependentUpon>
     </None>
@@ -194,6 +219,16 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>BuildingPostsModel.edmx</DependentUpon>
       <LastGenOutput>BuildingPostsModel.cs</LastGenOutput>
+    </Content>
+    <Content Include="CalenderModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>CalenderModel.edmx</DependentUpon>
+      <LastGenOutput>CalenderModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="CalenderModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>CalenderModel.edmx</DependentUpon>
+      <LastGenOutput>CalenderModel.cs</LastGenOutput>
     </Content>
     <Content Include="ConnectionStrings.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

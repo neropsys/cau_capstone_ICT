@@ -39,7 +39,7 @@ namespace Capston2.Controllers
         [HttpGet]
         public HttpResponseMessage Get([FromUri]GetModel value)
         {
-            using (Entities entities = new Entities())
+            using (ResidenceEntities entities = new ResidenceEntities())
             {
                 var tableValue = entities.RESIDENCE_POSTS;
                 var selectedTable = tableValue.ToList();

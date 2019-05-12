@@ -10,10 +10,6 @@ namespace Capston2
     public class GroupChatHub : Hub
     {
 
-        struct RightNowRoomInfo
-        {
-            int roomID;
-        }
         const int MIN_MEMBER_FOR_GROUPCHAT = 2;
 
 

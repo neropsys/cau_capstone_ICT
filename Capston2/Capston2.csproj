@@ -188,6 +188,7 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="ChatHub.cs" />
     <Compile Include="Controllers\AddProfileController.cs" />
+    <Compile Include="Controllers\CalenderController.cs" />
     <Compile Include="Controllers\FriendController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />

@@ -13,10 +13,10 @@ namespace Capston2DataAccess
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class ResidenceEntities : DbContext
+    public partial class CalenderEntities : DbContext
     {
-        public ResidenceEntities()
-            : base("name=ResidenceEntities")
+        public CalenderEntities()
+            : base("name=CalenderEntities")
         {
         }
     
@@ -25,6 +25,6 @@ namespace Capston2DataAccess
             throw new UnintentionalCodeFirstException();
         }
     
-        public DbSet<RESIDENCE_POSTS> RESIDENCE_POSTS { get; set; }
+        public DbSet<CALENDER> CALENDER { get; set; }
     }
 }
