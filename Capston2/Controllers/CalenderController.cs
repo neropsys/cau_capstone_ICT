@@ -21,7 +21,8 @@ namespace Capston2.Controllers
         {
             public string title { get; set; }
             public string content { get; set; }
-            public string date { get; set; }
+            public DateTime date { get; set; }
+            public string type { get; set; }
         }
 
         [HttpPost]
@@ -33,28 +34,82 @@ namespace Capston2.Controllers
             {
 
                 var senderInfo = userDataEntities.USER_INFO.Where(x => x.id.Equals(userId)).FirstOrDefault();
-                if(senderInfo.id == "")
+                if (senderInfo.id == "")
                 {
                     return new HttpResponseMessage(HttpStatusCode.BadRequest);
                 }
                 string userNick = senderInfo.nickname;
-
-                using(CalenderEntities calenderEntites = new CalenderEntities())
+                try
                 {
-                    calenderEntites.CALENDER.Add(new CALENDER
+                    using (CalenderEntities calenderEntites = new CalenderEntities())
                     {
-                        userId = userId,
-                        content = format.content,
-                        title = format.title,//2013-05-01
-                        date = DateTime.Parse(format.date)
-                    });
-                    calenderEntites.SaveChanges();
-                    return new HttpResponseMessage(HttpStatusCode.OK);
+                        switch (format.type)
+                        {
+                            case "new":
+                                calenderEntites.CALENDER.Add(new CALENDER
+                                {
+                                    userId = userId,
+                                    content = format.content,
+                                    title = format.title,//2013-05-01
+                                    date = format.date
+                                });
+                                calenderEntites.SaveChanges();
+                                return new HttpResponseMessage(HttpStatusCode.OK);
+                            case "delete":
+                                var removingItem = calenderEntites.CALENDER.SingleOrDefault(x =>
+                                x.title == format.title &&
+                                x.content == format.content &&
+                                x.date == format.date);
+                                if (removingItem != null)
+                                {
+                                    calenderEntites.CALENDER.Remove(removingItem);
+                                    calenderEntites.SaveChanges();
+                                    return new HttpResponseMessage(HttpStatusCode.OK);
+                                }
+                                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+                            default:
+                                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+                        }
+
+
+                    }
                 }
-               // using calende
-                // using 
+                catch (Exception e)
+                {
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError, e.Message);
+                }
+
 
             }
+        }
+
+        public class MyCalenderFormat
+        {
+            public string title { get; set; }
+            public string content { get; set; }
+            public DateTime date { get; set; }
+        }
+
+        [HttpGet]
+        [Route("api/{userId}/calender")]
+        public string GetMyCalender(string userId)
+        {
+            using (CalenderEntities calenderEntities = new CalenderEntities())
+            {
+                List<MyCalenderFormat> ret = new List<MyCalenderFormat>();
+                var query = from calender in calenderEntities.CALENDER
+                            where (calender.userId == userId)
+                            select new MyCalenderFormat
+                            {
+                                content = calender.content,
+                                date = calender.date,
+                                title = calender.title
+                            };
+                ret.AddRange(query.ToList());
+
+                return JsonConvert.SerializeObject(ret);
+            }
+
         }
 
         public class CalenderListFormat
