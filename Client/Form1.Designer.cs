@@ -55,6 +55,7 @@
             this.label9 = new System.Windows.Forms.Label();
             this.getChatFrom0 = new System.Windows.Forms.Button();
             this.getTagButton = new System.Windows.Forms.Button();
+            this.testBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -302,11 +303,22 @@
             this.getTagButton.UseVisualStyleBackColor = true;
             this.getTagButton.Click += new System.EventHandler(this.getTagButton_Click);
             // 
+            // testBtn
+            // 
+            this.testBtn.Location = new System.Drawing.Point(604, 410);
+            this.testBtn.Name = "testBtn";
+            this.testBtn.Size = new System.Drawing.Size(75, 23);
+            this.testBtn.TabIndex = 27;
+            this.testBtn.Text = "send";
+            this.testBtn.UseVisualStyleBackColor = true;
+            this.testBtn.Click += new System.EventHandler(this.testBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.testBtn);
             this.Controls.Add(this.getTagButton);
             this.Controls.Add(this.getChatFrom0);
             this.Controls.Add(this.label9);
@@ -370,6 +382,7 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Button getChatFrom0;
         private System.Windows.Forms.Button getTagButton;
+        private System.Windows.Forms.Button testBtn;
     }
 }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Capston2DataAccess;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
 
@@ -63,6 +64,37 @@ namespace Capston2
 
         }
 
+        public class UserInfoFormat
+        {
+            public string id { get; set; }
+            public string nickname { get; set; }
+        }
+        public void GetRightnowTagUserInfo(string fromUser)
+        {
+            var fromUserInfo = UserContainer.gUserList.Find(x => x.username.Equals(fromUser));
+            if (fromUserInfo == null)
+                return;
+
+            string userTag = fromUserInfo.rightNowStr;
+
+            var userListWithSameTag = UserContainer.gUserList.FindAll(x => x.rightNowStr.Equals(userTag));
+            List<UserInfoFormat> ret = new List<UserInfoFormat>();
+            using (capston_databaseEntities userDataEntities = new capston_databaseEntities())
+            {
+                
+                foreach (var userInfo in userListWithSameTag)
+                {
+                    var userProfile = userDataEntities.USER_INFO
+                        .Where(x => x.id == userInfo.username)
+                        .Select(f => new UserInfoFormat { id = f.id, nickname = f.nickname }).ToList();
+                    ret.AddRange(userProfile);
+                }
+            }
+            string retJson = JsonConvert.SerializeObject(ret);
+
+            Clients.Client(fromUserInfo.connectionID).getRightNowTagUserInfo(retJson);
+            
+        }
 
         //1. decrement tag count on tag change or delete if count is zero because no one uses it
         //2. update user's tag

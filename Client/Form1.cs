@@ -285,5 +285,10 @@ namespace Client
         {
             groupChat.Invoke("BroadcastTagList");
         }
+
+        private void testBtn_Click(object sender, EventArgs e)
+        {
+            groupChat.Invoke("GetRightnowTagUserInfo", user.Text.Trim());
+        }
     }
 }
