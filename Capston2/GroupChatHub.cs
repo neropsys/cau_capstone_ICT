@@ -22,7 +22,7 @@ namespace Capston2
 
         void JoinRightNowRoom(string fromUser, string roomName)
         {
-            var fromUserInfo = UserContainer.gUserList.Find(x => x.username.Equals(fromUser));
+            var fromUserInfo = UserContainer.gUserList.Find(x => x.userId.Equals(fromUser));
             if (fromUserInfo == null)
                 return;
             fromUserInfo.rightNowStr = roomName;
@@ -38,7 +38,7 @@ namespace Capston2
 
         public void GetRightnowRooms(string fromUser)
         {
-            var fromUserInfo = UserContainer.gUserList.Find(x => x.username.Equals(fromUser));
+            var fromUserInfo = UserContainer.gUserList.Find(x => x.userId.Equals(fromUser));
             if (fromUserInfo == null)
                 return;
 
@@ -49,7 +49,7 @@ namespace Capston2
 
         public void GetRightnowMessageByIndex(string fromUser, string roomTag, int chatIndex)
         {
-            var fromUserInfo = UserContainer.gUserList.Find(x => x.username.Equals(fromUser));
+            var fromUserInfo = UserContainer.gUserList.Find(x => x.userId.Equals(fromUser));
             if (fromUserInfo == null)
                 return;
             if (gRightNowRoomID.TryGetValue(roomTag, out int? roomID) && roomID != null)
@@ -71,7 +71,7 @@ namespace Capston2
         }
         public void GetRightnowTagUserInfo(string fromUser)
         {
-            var fromUserInfo = UserContainer.gUserList.Find(x => x.username.Equals(fromUser));
+            var fromUserInfo = UserContainer.gUserList.Find(x => x.userId.Equals(fromUser));
             if (fromUserInfo == null)
                 return;
 
@@ -85,7 +85,7 @@ namespace Capston2
                 foreach (var userInfo in userListWithSameTag)
                 {
                     var userProfile = userDataEntities.USER_INFO
-                        .Where(x => x.id == userInfo.username)
+                        .Where(x => x.id == userInfo.userId)
                         .Select(f => new UserInfoFormat { id = f.id, nickname = f.nickname }).ToList();
                     ret.AddRange(userProfile);
                 }
@@ -104,7 +104,7 @@ namespace Capston2
         //5. join user if room exists
         public void UploadTag(string fromUser, string keyword)
         {
-            var fromUserInfo = UserContainer.gUserList.Find(x => x.username.Equals(fromUser));
+            var fromUserInfo = UserContainer.gUserList.Find(x => x.userId.Equals(fromUser));
             if (fromUserInfo == null || fromUserInfo.rightNowStr == keyword)
                 return;
 
@@ -228,7 +228,7 @@ namespace Capston2
 
         public void GetTag(string fromuser)
         {
-            var fromUserInfo = UserContainer.gUserList.Find(x => x.username.Equals(fromuser));
+            var fromUserInfo = UserContainer.gUserList.Find(x => x.userId.Equals(fromuser));
             if (fromUserInfo == null)
                 return;
             Dictionary<string, int> tagUserNum = new Dictionary<string, int>();
@@ -247,7 +247,7 @@ namespace Capston2
         }
         public void SendGroupMsg(string fromUser, string msg)
         {
-            var fromUserInfo = UserContainer.gUserList.Find(x => x.username.Equals(fromUser));
+            var fromUserInfo = UserContainer.gUserList.Find(x => x.userId.Equals(fromUser));
             if (fromUserInfo == null)
                 return;
 
@@ -258,10 +258,16 @@ namespace Capston2
 
             var roomInfo = UserContainer.gChatList[roomId.Value];
             int _index = roomInfo.Item2.Count;
-            roomInfo.Item2.Add(new CHAT_LOG { text = msg, user = fromUserInfo.username, index = _index });
+            roomInfo.Item2.Add(new CHAT_LOG {
+                text = msg,
+                userId = fromUserInfo.userId,
+                index = _index,
+                userNick = fromUserInfo.userNick,
+                time = DateTime.Now.ToString("s")
+            });
             foreach (var userInfo in roomInfo.Item1)
             {
-                Clients.Client(userInfo.connectionID).onGroupChat(fromUserInfo.username, msg);
+                Clients.Client(userInfo.connectionID).onGroupChat(fromUserInfo.userId, msg);
             }
         }
 

@@ -7,7 +7,8 @@ namespace Capston2
 {
     public class Users
     {
-        public string username { get; set; }
+        public string userId { get; set; }
+        public string userNick { get; set; }
         public string connectionID { get; set; }
         public string rightNowStr { get; set; }
         public List<int> belongingChatID { get; set; }//MeRightNow or other group chats
@@ -16,8 +17,10 @@ namespace Capston2
     public struct CHAT_LOG
     {
         public string text;
-        public string user;
+        public string userId;
+        public string userNick;
         public int index;
+        public string time;
     }
     public static class RoomID
     {

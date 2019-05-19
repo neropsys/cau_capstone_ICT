@@ -24,7 +24,7 @@ namespace Capston2
         }
         public void GetMessageByID(string fromUserID, string targetUserID)
         {
-            Users fromUser = UserContainer.gUserList.Where(x => x.username.Equals(fromUserID)).FirstOrDefault();
+            Users fromUser = UserContainer.gUserList.Where(x => x.userId.Equals(fromUserID)).FirstOrDefault();
             if (fromUser != null)
             {
                 int roomID = 0;
@@ -42,7 +42,7 @@ namespace Capston2
 
         public void GetMessageByIndex(string fromUser, string targetUserID, int chatIndex)
         {
-            var fromUserInfo = UserContainer.gUserList.Find(x => x.username.Equals(fromUser));
+            var fromUserInfo = UserContainer.gUserList.Find(x => x.userId.Equals(fromUser));
             if (fromUserInfo == null)
                 return;
 
@@ -60,8 +60,8 @@ namespace Capston2
 
         public void CreateChat(string fromUser, string toUser)
         {
-            var currentUser = UserContainer.gUserList.Find(x => x.username.Equals(fromUser));
-            var targetUser = UserContainer.gUserList.Find(x => x.username.Equals(toUser));
+            var currentUser = UserContainer.gUserList.Find(x => x.userId.Equals(fromUser));
+            var targetUser = UserContainer.gUserList.Find(x => x.userId.Equals(toUser));
             if (currentUser == null || targetUser == null)
             {
                 //requesting user does not exist or target user does not exist
@@ -91,8 +91,8 @@ namespace Capston2
         {
             var sender_connectionID = Context.ConnectionId;
 
-            var fromUserInfo = UserContainer.gUserList.Find(x => x.username.Equals(fromUser));
-            var targetUser = UserContainer.gUserList.Find(x => x.username.Equals(toUser));
+            var fromUserInfo = UserContainer.gUserList.Find(x => x.userId.Equals(fromUser));
+            var targetUser = UserContainer.gUserList.Find(x => x.userId.Equals(toUser));
 
             if(fromUser == null || targetUser == null)
             {//either user does not exist
@@ -105,15 +105,19 @@ namespace Capston2
                 chatRoomID = fromUserInfo.roomIDByTargetUser[toUser];
             }
 
-            var chatLog = new CHAT_LOG();
-            chatLog.user = fromUserInfo.username;
-            chatLog.text = message;
-            chatLog.index = UserContainer.gChatList[chatRoomID].Item2.Count;
+            var chatLog = new CHAT_LOG
+            {
+                userId = fromUserInfo.userId,
+                text = message,
+                index = UserContainer.gChatList[chatRoomID].Item2.Count,
+                userNick = fromUserInfo.userNick,
+                time = DateTime.Now.ToString("s")
+            };
             UserContainer.gChatList[chatRoomID].Item2.Add(chatLog);
 
             foreach (var userInfo in UserContainer.gChatList[chatRoomID].Item1)
             {
-                Clients.Client(userInfo.connectionID).sendMessage(message, fromUserInfo.username);
+                Clients.Client(userInfo.connectionID).sendMessage(message, fromUserInfo.userId);
             }
 
         }
@@ -121,17 +125,15 @@ namespace Capston2
         public override Task OnConnected()
         {
             var connectionID = Context.ConnectionId;
-            string userName = Context.QueryString["username"];
+            string userId = Context.QueryString["userId"];
             string rightNowStr = Context.QueryString["rightNowStr"];
-            if (string.IsNullOrEmpty(userName))
-            {
-                userName = Context.Headers["username"];
-            }
+            string userNick = Context.QueryString["userNick"];
             Users user = new Users()
             {
-                username = userName,
+                userId = userId,
                 connectionID = connectionID,
                 rightNowStr = "",
+                userNick = userNick,
                 belongingChatID = new List<int>(),
                 roomIDByTargetUser = new Dictionary<string, int>()
             };
