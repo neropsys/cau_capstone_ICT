@@ -192,7 +192,6 @@
     <Compile Include="Controllers\FriendController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
-    <Compile Include="Controllers\CurrentPositionPostsController.cs" />
     <Compile Include="Controllers\ResidencePostsController.cs" />
     <Compile Include="Controllers\UpdateProfileController.cs" />
     <Compile Include="Controllers\UserInfoController.cs" />

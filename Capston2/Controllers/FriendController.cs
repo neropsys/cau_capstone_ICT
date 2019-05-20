@@ -12,10 +12,18 @@ using Newtonsoft.Json;
 
 namespace Capston2.Controllers
 {
+
     public class FriendController : ApiController
     {
         string cs = ConfigurationManager.ConnectionStrings["UserInfoDBString"].ConnectionString;
         SqlCommand cmd = new SqlCommand();
+
+        public struct FriendResponseFormat
+        {
+            public string nick { get; set; }
+            public string id { get; set; }
+
+        }
         //get friend list
         [HttpGet]
         [Route("api/{userId}/friends")]
@@ -32,16 +40,15 @@ namespace Capston2.Controllers
                     (x.friend1.Equals(userId) || x.friend2.Equals(userId)) &&
                     x.type != null
                     );
-                    List<string> ret = new List<string>();
+                    List<FriendResponseFormat> ret = new List<FriendResponseFormat>();
                     foreach (var friendData in selectedTable)
                     {
-
                         string targetFriendID = friendData.friend1.Equals(userId) ? friendData.friend2 : friendData.friend1;
 
                         if (userDataTable.Exists(x => x.id.Equals(targetFriendID)))
                         {
                             var friendNickname = userDataTable.Find(x => x.id.Equals(targetFriendID));
-                            ret.Add(friendNickname.nickname);
+                            ret.Add(new FriendResponseFormat { nick = friendNickname.nickname, id = targetFriendID });
                         }
                     }
                     string json = JsonConvert.SerializeObject(ret.ToArray());
