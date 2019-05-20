@@ -57,7 +57,14 @@ namespace Capston2
             }
 
         }
-
+        public void GetAllUser(string fromUser)
+        {
+            var fromUserInfo = UserContainer.gUserList.Find(x => x.userId.Equals(fromUser));
+            if (fromUserInfo == null)
+                return;
+            string _json = JsonConvert.SerializeObject(UserContainer.gUserList); //send to client
+            Clients.Client(fromUserInfo.connectionID).getUserList(_json);
+        }
         public void CreateChat(string fromUser, string toUser)
         {
             var currentUser = UserContainer.gUserList.Find(x => x.userId.Equals(fromUser));
@@ -128,6 +135,15 @@ namespace Capston2
             string userId = Context.Request.Headers["userId"];
             string rightNowStr = Context.Request.Headers["rightNowStr"];
             string userNick = Context.Request.Headers["userNick"];
+
+            var userInfo = UserContainer.gUserList.Where(x => x.userId == userId).FirstOrDefault();
+            if (userInfo != null)
+            {
+                userInfo.connectionID = connectionID;
+                string _json = JsonConvert.SerializeObject(UserContainer.gUserList); //send to client
+                Clients.All.getUserList(_json);
+                return base.OnConnected();
+            }
             Users user = new Users()
             {
                 userId = userId,
@@ -142,13 +158,20 @@ namespace Capston2
             Clients.All.getUserList(json);
             return base.OnConnected();
         }
+        public override Task OnReconnected()
+        {
+
+            string json = JsonConvert.SerializeObject(UserContainer.gUserList); //send to client
+            Clients.All.getUserList(json);
+            return base.OnReconnected();
+        }
         public override Task OnDisconnected(bool stopCalled)
         {
             var connectionID = Context.ConnectionId;
             Users user = UserContainer.gUserList.Where(x => x.connectionID.Equals(connectionID)).FirstOrDefault();
             if (user != null)
             {
-                UserContainer.gUserList.Remove(user); //in the case of connection termination we removed the user from the list
+                //UserContainer.gUserList.Remove(user); //in the case of connection termination we removed the user from the list
                 string json = JsonConvert.SerializeObject(UserContainer.gUserList); //send to client
                 Clients.All.getUserList(json);
             }

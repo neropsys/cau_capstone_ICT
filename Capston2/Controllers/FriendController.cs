@@ -19,19 +19,16 @@ namespace Capston2.Controllers
         string cs = ConfigurationManager.ConnectionStrings["UserInfoDBString"].ConnectionString;
         SqlCommand cmd = new SqlCommand();
 
-        [JsonObject(MemberSerialization.OptIn)]
         public class FriendResponseFormat
         {
-            [JsonProperty]
-            public object nick { get; set; }
-            [JsonProperty]
-            public object id { get; set; }
-
+            public string nick { get; set; }
+            public string id { get; set; }
+            public int? type { get; set; }
         }
         //get friend list
         [HttpGet]
         [Route("api/{userId}/friends")]
-        public string GetFriend(string userId)
+        public HttpResponseMessage GetFriend(string userId)
         {
             using (capston_databaseEntities userDataEntities = new capston_databaseEntities())
             {
@@ -52,19 +49,17 @@ namespace Capston2.Controllers
                         if (userDataTable.Exists(x => x.id.Equals(targetFriendID)))
                         {
                             var friendNickname = userDataTable.Find(x => x.id.Equals(targetFriendID));
-                            ret.Add(new FriendResponseFormat { nick = friendNickname.nickname, id = targetFriendID });
+                            ret.Add(new FriendResponseFormat { nick = friendNickname.nickname, id = targetFriendID, type = friendData.type });
                         }
                     }
 
-                    var serializer = new JsonSerializer();
-                    var stringWriter = new StringWriter();
-                    using (var writer = new JsonTextWriter(stringWriter))
-                    {
-                        writer.QuoteName = false;
-                        serializer.Serialize(writer, ret);
-                    }
-                    var json = stringWriter.ToString();
-                    return json;
+                    var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
+
+                    string jsonContent = JsonConvert.SerializeObject(ret);
+                    responseMessage.Content = new StringContent(jsonContent,
+                         System.Text.Encoding.UTF8,
+                         "application/json");
+                    return responseMessage;
                 }
             }
         }

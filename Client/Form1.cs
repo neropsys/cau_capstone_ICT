@@ -88,10 +88,11 @@ namespace Client
 
         bool connect(string userName, string rightNowStr, string userNick)
         {
-            connection = new HubConnection("http://localhost:13458/signalr");
-            userName = EncodeUtf16ToUtf8.Utf16ToUtf8(userName);
-            rightNowStr = EncodeUtf16ToUtf8.Utf16ToUtf8(rightNowStr);
-            connection.Headers.Add("userId", userName);
+            connection = new HubConnection("http://localhost:13458/");
+            //userName = EncodeUtf16ToUtf8.Utf16ToUtf8(userName);
+            //rightNowStr = EncodeUtf16ToUtf8.Utf16ToUtf8(rightNowStr);
+            //connection.
+            connection. Headers.Add("userId", userName);
             connection.Headers.Add("rightNowStr", rightNowStr);
             connection.Headers.Add("userNick", userNick);
             chat = connection.CreateHubProxy("ChatHub");
@@ -297,7 +298,7 @@ namespace Client
 
         private void label1_Click(object sender, EventArgs e)
         {
-
+            chat.Invoke("GetMessageByIndex", user.Text.Trim());
         }
     }
 }
