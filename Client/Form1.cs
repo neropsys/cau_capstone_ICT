@@ -59,7 +59,8 @@ namespace Client
         }
         public class Users  //User Model
         {
-            public string username { get; set; }
+            public string userId { get; set; }
+            public string userNick { get; set; }
             public string connectionID { get; set; }
             public string rightNowStr { get; set; }
             public List<int> belongingChatID { get; set; }//groupchat id that this user belongs(include, MeRightNow groupchat)
@@ -80,16 +81,19 @@ namespace Client
         public Form1()
         {
             InitializeComponent();
+            string fds = DateTime.Now.ToString("s");
+
         }
 
 
-        bool connect(string userName, string rightNowStr)
+        bool connect(string userName, string rightNowStr, string userNick)
         {
             connection = new HubConnection("http://localhost:13458/signalr");
             userName = EncodeUtf16ToUtf8.Utf16ToUtf8(userName);
             rightNowStr = EncodeUtf16ToUtf8.Utf16ToUtf8(rightNowStr);
-            connection.Headers.Add("username", userName);
+            connection.Headers.Add("userId", userName);
             connection.Headers.Add("rightNowStr", rightNowStr);
+            connection.Headers.Add("userNick", userNick);
             chat = connection.CreateHubProxy("ChatHub");
             groupChat = connection.CreateHubProxy("GroupChatHub");
             try
@@ -99,7 +103,7 @@ namespace Client
                 { // getUserList is ChatHub function
                     var json_serialize = new JavaScriptSerializer();
                     users = json_serialize.Deserialize<List<Users>>(message);
-                    List<string> user_names = users.Select(x => x.username).ToList();
+                    List<string> user_names = users.Select(x => x.userId).ToList();
 
                     var myIndex = user_names.IndexOf(userName);
                     user_names.Remove(userName);
@@ -200,7 +204,7 @@ namespace Client
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (connect(user.Text.Trim(), rightNowStr.Text.Trim()))
+            if (connect(user.Text.Trim(), rightNowStr.Text.Trim(), userNickInput.Text.Trim()))
             {
                 button1.Enabled = false; // Server Connection
                 button2.Enabled = true;
@@ -240,7 +244,7 @@ namespace Client
         {
             if (!textbox1.Text.Trim().Equals("") && sender_message != null)
             {
-                chat.Invoke("SendMessage", user.Text.Trim(),  sender_message.username, textbox1.Text.Trim()); //Send message to user
+                chat.Invoke("SendMessage", user.Text.Trim(),  sender_message.userId, textbox1.Text.Trim()); //Send message to user
                 textbox1.Text = "";
             }
         }
@@ -248,7 +252,7 @@ namespace Client
 
         private void getTextLogBtn_Click(object sender, EventArgs e)
         {
-            chat.Invoke("GetMessageByID", user.Text.Trim(), sender_message.username);
+            chat.Invoke("GetMessageByID", user.Text.Trim(), sender_message.userId);
         }
 
         private void createRoomBtn_Click(object sender, EventArgs e)
@@ -289,6 +293,11 @@ namespace Client
         private void testBtn_Click(object sender, EventArgs e)
         {
             groupChat.Invoke("GetRightnowTagUserInfo", user.Text.Trim());
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -56,6 +56,8 @@
             this.getChatFrom0 = new System.Windows.Forms.Button();
             this.getTagButton = new System.Windows.Forms.Button();
             this.testBtn = new System.Windows.Forms.Button();
+            this.userNickInput = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button1
@@ -125,9 +127,10 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(201, 16);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(62, 12);
+            this.label1.Size = new System.Drawing.Size(40, 12);
             this.label1.TabIndex = 7;
-            this.label1.Text = "username";
+            this.label1.Text = "userId";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // label2
             // 
@@ -313,11 +316,29 @@
             this.testBtn.UseVisualStyleBackColor = true;
             this.testBtn.Click += new System.EventHandler(this.testBtn_Click);
             // 
+            // userNickInput
+            // 
+            this.userNickInput.Location = new System.Drawing.Point(201, 61);
+            this.userNickInput.Name = "userNickInput";
+            this.userNickInput.Size = new System.Drawing.Size(100, 21);
+            this.userNickInput.TabIndex = 28;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(133, 68);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(55, 12);
+            this.label10.TabIndex = 29;
+            this.label10.Text = "userNick";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.userNickInput);
             this.Controls.Add(this.testBtn);
             this.Controls.Add(this.getTagButton);
             this.Controls.Add(this.getChatFrom0);
@@ -383,6 +404,8 @@
         private System.Windows.Forms.Button getChatFrom0;
         private System.Windows.Forms.Button getTagButton;
         private System.Windows.Forms.Button testBtn;
+        private System.Windows.Forms.TextBox userNickInput;
+        private System.Windows.Forms.Label label10;
     }
 }
 

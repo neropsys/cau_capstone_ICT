@@ -125,9 +125,9 @@ namespace Capston2
         public override Task OnConnected()
         {
             var connectionID = Context.ConnectionId;
-            string userId = Context.QueryString["userId"];
-            string rightNowStr = Context.QueryString["rightNowStr"];
-            string userNick = Context.QueryString["userNick"];
+            string userId = Context.Request.Headers["userId"];
+            string rightNowStr = Context.Request.Headers["rightNowStr"];
+            string userNick = Context.Request.Headers["userNick"];
             Users user = new Users()
             {
                 userId = userId,

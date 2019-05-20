@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -18,10 +19,13 @@ namespace Capston2.Controllers
         string cs = ConfigurationManager.ConnectionStrings["UserInfoDBString"].ConnectionString;
         SqlCommand cmd = new SqlCommand();
 
-        public struct FriendResponseFormat
+        [JsonObject(MemberSerialization.OptIn)]
+        public class FriendResponseFormat
         {
-            public string nick { get; set; }
-            public string id { get; set; }
+            [JsonProperty]
+            public object nick { get; set; }
+            [JsonProperty]
+            public object id { get; set; }
 
         }
         //get friend list
@@ -51,7 +55,15 @@ namespace Capston2.Controllers
                             ret.Add(new FriendResponseFormat { nick = friendNickname.nickname, id = targetFriendID });
                         }
                     }
-                    string json = JsonConvert.SerializeObject(ret.ToArray());
+
+                    var serializer = new JsonSerializer();
+                    var stringWriter = new StringWriter();
+                    using (var writer = new JsonTextWriter(stringWriter))
+                    {
+                        writer.QuoteName = false;
+                        serializer.Serialize(writer, ret);
+                    }
+                    var json = stringWriter.ToString();
                     return json;
                 }
             }
