@@ -137,19 +137,17 @@ namespace Capston2
 
 
             //return if tag is set to null
-            if (keyword == "" || gRightNowRoomID.ContainsKey(keyword))
+            if (keyword == "")
             {
-                //broadcast
-                if (gRightNowRoomID.ContainsKey(keyword))
-                {
-                    BroadcastTagList();
-                }
-
                 return;
             }
             else
             {
-                gRightNowRoomID.Add(keyword, null);
+                if(gRightNowRoomID.ContainsKey(keyword) == false)
+                {
+                    gRightNowRoomID.Add(keyword, null);
+                }
+                BroadcastTagList();
             }
             var userListWithSameTag = UserContainer.gUserList.FindAll(x => x.rightNowStr.Equals(keyword));
 
@@ -171,7 +169,10 @@ namespace Capston2
             if (chatID.HasValue == false && 
                 userListWithSameTag.Count >= MIN_MEMBER_FOR_GROUPCHAT)
             {
-                gRightNowRoomID.Add(keyword, RoomID.globalChatRoomId);
+                if (gRightNowRoomID[keyword] == null)
+                {
+                    gRightNowRoomID[keyword] = RoomID.globalChatRoomId;
+                }
                 foreach (var userInfo in userListWithSameTag)
                 {
                     userInfo.belongingChatID.Add(RoomID.globalChatRoomId);
