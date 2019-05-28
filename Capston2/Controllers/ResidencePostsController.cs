@@ -48,9 +48,48 @@ namespace Capston2.Controllers
             public string userId { get; set; }
             public string text { get; set; }
         }
+        public class ReplyDeleteFormat
+        {
+            public int replyId;
+        }
+        [HttpPost]
+        [Route("api/posts/replies/delete/{postId}")]
+        public HttpResponseMessage DeleteReply(int postId, [FromBody]ReplyDeleteFormat format)
+        {
+            using (capston_databaseEntities userInfoTable = new capston_databaseEntities())
+            {
+                try
+                {
+                    using (capston_postreplyconn replyEntities = new capston_postreplyconn())
+                    {
+                        var replyTable = replyEntities.POST_REPLIES;
+                        var targetReply = replyTable.FirstOrDefault(x => x.postid == postId && x.replyindex == format.replyId);
+                        if(targetReply != null)
+                        {
+                            replyTable.Remove(targetReply);
+
+                            replyEntities.SaveChanges();
+                            return new HttpResponseMessage(HttpStatusCode.OK);
+                        }
+                        else
+                        {
+                            return new HttpResponseMessage(HttpStatusCode.BadRequest);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    var responseMessage = new HttpResponseMessage(HttpStatusCode.InternalServerError);
+                    responseMessage.Content = new StringContent(e.Message,
+                               System.Text.Encoding.UTF8,
+                               "application/json");
+                    return responseMessage;
+                }
+            }
+        }
         [HttpPost]
         [Route("api/posts/replies/{postId}")]
-        public HttpResponseMessage PostReplies(int postId, [FromBody] ReplyFormat format)
+        public HttpResponseMessage PostReply(int postId, [FromBody] ReplyFormat format)
         {
             using (capston_databaseEntities userInfoTable = new capston_databaseEntities())
             {
