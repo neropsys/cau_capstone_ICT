@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="post_replies.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="capston_postreply.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="POST_REPLIES">
           <Key>
             <PropertyRef Name="postid" />
@@ -18,13 +18,14 @@
           <Property Name="text" Type="varchar(max)" Nullable="false" />
           <Property Name="time" Type="datetime" Nullable="false" />
         </EntityType>
-        <EntityContainer Name="post_repliesStoreContainer">
+        <EntityContainer Name="capston_postreplyStoreContainer">
           <EntitySet Name="POST_REPLIES" EntityType="Self.POST_REPLIES" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="post_replies" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="capston_postreply" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="POST_REPLIES">
           <Key>
             <PropertyRef Name="postid" />
@@ -38,7 +39,7 @@
           <Property Name="text" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="time" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
-        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="capston_postreplyconn" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="POST_REPLIES" EntityType="Self.POST_REPLIES" />
         </EntityContainer>
       </Schema>
@@ -46,16 +47,16 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="post_repliesStoreContainer" CdmEntityContainer="Entities">
+        <EntityContainerMapping StorageEntityContainer="capston_postreplyStoreContainer" CdmEntityContainer="capston_postreplyconn">
           <EntitySetMapping Name="POST_REPLIES">
-            <EntityTypeMapping TypeName="post_replies.POST_REPLIES">
+            <EntityTypeMapping TypeName="capston_postreply.POST_REPLIES">
               <MappingFragment StoreEntitySet="POST_REPLIES">
-                <ScalarProperty Name="time" ColumnName="time" />
                 <ScalarProperty Name="postid" ColumnName="postid" />
                 <ScalarProperty Name="nickname" ColumnName="nickname" />
                 <ScalarProperty Name="userid" ColumnName="userid" />
                 <ScalarProperty Name="replyindex" ColumnName="replyindex" />
                 <ScalarProperty Name="text" ColumnName="text" />
+                <ScalarProperty Name="time" ColumnName="time" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

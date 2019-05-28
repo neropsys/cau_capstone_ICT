@@ -59,15 +59,15 @@ namespace Capston2.Controllers
                 {
                     try
                     {
-                        using (Entities replyEntities = new Entities())
+                        using (capston_postreplyconn replyEntities = new capston_postreplyconn())
                         {
                             var replyTable = replyEntities.POST_REPLIES;
-                            var replyList = replyTable.Last(x => x.postid == postId);
+                            var lastReply = replyTable.Where(x => x.postid == postId).OrderByDescending(x => x.replyindex).FirstOrDefault();
                             replyTable.Add(new POST_REPLIES
                             {
                                 nickname = userInfo.nickname,
                                 postid = postId,
-                                replyindex = replyList.replyindex + 1,
+                                replyindex = lastReply != null ? lastReply.replyindex + 1 : 0,
                                 text = format.text,
                                 userid = format.userId,
                                 time = DateTime.Now
@@ -94,8 +94,18 @@ namespace Capston2.Controllers
         [Route("api/posts/replies/{postId}")]
         public HttpResponseMessage GetReplies(int postId)
         {
-
-            using (Entities replyEntities = new Entities())
+            //format
+            /*
+             {
+             "postid":44,
+             "nickname":"장혁재닉",
+             "userid":"chang_hyuk_jae",
+             "replyindex":0,
+             "text":"ㅎㅇㅎㅇ",
+             "time":"2019-05-29T05:13:35.297"
+             }
+             */
+            using (capston_postreplyconn replyEntities = new capston_postreplyconn())
             {
                 var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
                 var replyList = replyEntities.POST_REPLIES.Where(x => x.postid == postId).ToArray();
