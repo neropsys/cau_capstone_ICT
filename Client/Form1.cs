@@ -1,5 +1,7 @@
 ﻿using MetroFramework.Forms;
 using Microsoft.AspNet.SignalR.Client;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -69,8 +71,10 @@ namespace Client
         public struct CHAT_LOG
         {
             public string text;
-            public string user;
+            public string userId;
+            public string userNick;
             public int index;
+            public string time;
         }
         public 
         HubConnection connection; // Connection defination
@@ -132,7 +136,7 @@ namespace Client
                         chatLogBox.Clear();
                         foreach(var chat in chatLog)
                         {
-                            chatLogBox.Text += chat.user + ":" + chat.text + "/ index:" + chat.index + "\n"; // writing username and message on richTextBox1 
+                            chatLogBox.Text += chat.userNick + ":" + chat.text + "/ index:" + chat.index + "\n"; // writing username and message on richTextBox1 
                         }
                        
                     }));
@@ -146,7 +150,7 @@ namespace Client
                         groupChatLog.Clear();
                         foreach (var chat in chatLog)
                         {
-                            groupChatLog.Text += chat.user + ":" + chat.text + "/ index:" + chat.index + "\n"; // writing username and message on richTextBox1 
+                            groupChatLog.Text += chat.userNick + ":" + chat.text + "/ index:" + chat.index + "\n"; // writing username and message on richTextBox1 
                         }
 
                     }));
@@ -160,7 +164,7 @@ namespace Client
                         groupChatLog.Clear();
                         foreach (var chat in chatLog)
                         {
-                            groupChatLog.Text += chat.user + ":" + chat.text + "/ index:" + chat.index + "\n"; // writing username and message on richTextBox1 
+                            groupChatLog.Text += chat.userNick + ":" + chat.text + "/ index:" + chat.index + "\n"; // writing username and message on richTextBox1 
                         }
 
                     }));
@@ -177,6 +181,8 @@ namespace Client
                 });
                 groupChat.On<string, string>("onGroupChat", (user, message) =>
                 {
+                    CHAT_LOG newChat = JsonConvert.DeserializeObject<CHAT_LOG>(message);
+                    // debug view: "{\"text\":\"ddd\",\"userId\":\"user1\",\"userNick\":\"user1\",\"index\":2,\"time\":\"2019-05-29T00:30:58\"}"
                     BeginInvoke(new Action(() =>
                     {
                         groupChatLog.Text += user + ":" + message + "\n"; // writing username and message on richTextBox1 
@@ -185,13 +191,16 @@ namespace Client
 
                 groupChat.On<string>("updateAvailableTags", (tagListJson) =>
                 {
-                    var json_serialize = new JavaScriptSerializer();
-                    List<string> tagList = json_serialize.Deserialize<List<string>>(tagListJson);
-
+                    var dict = JsonConvert.DeserializeObject<List<KeyValuePair<string, int>>>(tagListJson);
+                    List<string> tags = new List<string>();
+                    foreach(var tag in dict)
+                    {
+                        tags.Add(tag.Key);
+                    }
                     BeginInvoke(new Action(() =>
                     {
                         this.tagList.Items.Clear();
-                        this.tagList.Items.AddRange(tagList.ToArray());
+                        this.tagList.Items.AddRange(tags.ToArray());
                     }));
                 });
                 connection.Start().Wait();

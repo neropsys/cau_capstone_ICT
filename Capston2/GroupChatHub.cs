@@ -259,16 +259,20 @@ namespace Capston2
 
             var roomInfo = UserContainer.gChatList[roomId.Value];
             int _index = roomInfo.Item2.Count;
-            roomInfo.Item2.Add(new CHAT_LOG {
+            var newChatLog = new CHAT_LOG
+            {
                 text = msg,
                 userId = fromUserInfo.userId,
                 index = _index,
                 userNick = fromUserInfo.userNick,
                 time = DateTime.Now.ToString("s")
-            });
+            };
+            roomInfo.Item2.Add(newChatLog);
+
+            string jsonChatLog = JsonConvert.SerializeObject(newChatLog);
             foreach (var userInfo in roomInfo.Item1)
             {
-                Clients.Client(userInfo.connectionID).onGroupChat(fromUserInfo.userId, msg);
+                Clients.Client(userInfo.connectionID).onGroupChat(fromUserInfo.userId, jsonChatLog);
             }
         }
 

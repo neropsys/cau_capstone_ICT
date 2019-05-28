@@ -102,6 +102,24 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FriendModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="PostReplyModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PostReplyModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PostReplyModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PostReplyModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PostReplyModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PostReplyModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="POST_REPLIES.cs">
+      <DependentUpon>PostReplyModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="PrivacyModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -217,6 +235,13 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>PrivacyModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
+    <EntityDeploy Include="PostReplyModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>PostReplyModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="PostReplyModel.edmx.diagram">
+      <DependentUpon>PostReplyModel.edmx</DependentUpon>
+    </None>
     <None Include="PrivacyModel.edmx.diagram">
       <DependentUpon>PrivacyModel.edmx</DependentUpon>
     </None>
@@ -267,6 +292,16 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>FriendModel.edmx</DependentUpon>
       <LastGenOutput>FriendModel.cs</LastGenOutput>
+    </Content>
+    <Content Include="PostReplyModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>PostReplyModel.edmx</DependentUpon>
+      <LastGenOutput>PostReplyModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="PostReplyModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>PostReplyModel.edmx</DependentUpon>
+      <LastGenOutput>PostReplyModel.cs</LastGenOutput>
     </Content>
     <Content Include="PrivacyModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

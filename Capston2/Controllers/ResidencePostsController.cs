@@ -36,6 +36,77 @@ namespace Capston2.Controllers
         {
             public string residenceName { get; set; }
         }
+        public class ReplyModel
+        {
+            public string nickName { get; set; }
+            public string userId { get; set; }
+            public int replyIndex { get; set; }
+            public string text { get; set; }
+        }
+        public class ReplyFormat
+        {
+            public string userId { get; set; }
+            public string text { get; set; }
+        }
+        [HttpPost]
+        [Route("api/posts/replies/{postId}")]
+        public HttpResponseMessage PostReplies(int postId, [FromBody] ReplyFormat format)
+        {
+            using (capston_databaseEntities userInfoTable = new capston_databaseEntities())
+            {
+                var userInfo = userInfoTable.USER_INFO.FirstOrDefault(x => x.id == format.userId);
+                if (userInfo != null)
+                {
+                    try
+                    {
+                        using (Entities replyEntities = new Entities())
+                        {
+                            var replyTable = replyEntities.POST_REPLIES;
+                            var replyList = replyTable.Last(x => x.postid == postId);
+                            replyTable.Add(new POST_REPLIES
+                            {
+                                nickname = userInfo.nickname,
+                                postid = postId,
+                                replyindex = replyList.replyindex + 1,
+                                text = format.text,
+                                userid = format.userId,
+                                time = DateTime.Now
+                            });
+
+                            replyEntities.SaveChanges();
+                        }
+                        return new HttpResponseMessage(HttpStatusCode.OK);
+                    }
+                    catch(Exception e)
+                    {
+                        var responseMessage = new HttpResponseMessage(HttpStatusCode.InternalServerError);
+                        responseMessage.Content = new StringContent(e.Message,
+                                   System.Text.Encoding.UTF8,
+                                   "application/json");
+                        return responseMessage;
+                    }
+                }
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+            
+        }
+        [HttpGet]
+        [Route("api/posts/replies/{postId}")]
+        public HttpResponseMessage GetReplies(int postId)
+        {
+
+            using (Entities replyEntities = new Entities())
+            {
+                var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
+                var replyList = replyEntities.POST_REPLIES.Where(x => x.postid == postId).ToArray();
+                string replyListJson = JsonConvert.SerializeObject(replyList);
+                responseMessage.Content = new StringContent(replyListJson,
+                                   System.Text.Encoding.UTF8,
+                                   "application/json");
+                return responseMessage;
+            }
+        }
+
         [HttpGet]
         public HttpResponseMessage Get([FromUri]GetModel value)
         {
