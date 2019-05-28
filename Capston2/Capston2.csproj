@@ -186,6 +186,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="BopPartyHub.cs" />
     <Compile Include="ChatHub.cs" />
     <Compile Include="Controllers\AddProfileController.cs" />
     <Compile Include="Controllers\CalenderController.cs" />

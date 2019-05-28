@@ -65,6 +65,7 @@ namespace Client
             public string userNick { get; set; }
             public string connectionID { get; set; }
             public string rightNowStr { get; set; }
+            public string bopParty { get; set; }
             public List<int> belongingChatID { get; set; }//groupchat id that this user belongs(include, MeRightNow groupchat)
             //public Dictionary<string, int> roomIDByTargetUser { get; set; }//key:other user's name, value:chat room ID
         }
@@ -90,7 +91,7 @@ namespace Client
         }
 
 
-        bool connect(string userName, string rightNowStr, string userNick)
+        bool connect(string userName, string rightNowStr, string userNick, string bopParty)
         {
             connection = new HubConnection("http://localhost:13458/");
             //userName = EncodeUtf16ToUtf8.Utf16ToUtf8(userName);
@@ -99,6 +100,7 @@ namespace Client
             connection. Headers.Add("userId", userName);
             connection.Headers.Add("rightNowStr", rightNowStr);
             connection.Headers.Add("userNick", userNick);
+            connection.Headers.Add("bopParty", bopParty);
             chat = connection.CreateHubProxy("ChatHub");
             groupChat = connection.CreateHubProxy("GroupChatHub");
             try
@@ -214,7 +216,7 @@ namespace Client
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (connect(user.Text.Trim(), rightNowStr.Text.Trim(), userNickInput.Text.Trim()))
+            if (connect(user.Text.Trim(), rightNowStr.Text.Trim(), userNickInput.Text.Trim(), bopPartyInput.Text.Trim()))
             {
                 button1.Enabled = false; // Server Connection
                 button2.Enabled = true;
@@ -308,6 +310,11 @@ namespace Client
         private void label1_Click(object sender, EventArgs e)
         {
             chat.Invoke("GetMessageByIndex", user.Text.Trim());
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -11,6 +11,9 @@ namespace Capston2
         public string userNick { get; set; }
         public string connectionID { get; set; }
         public string rightNowStr { get; set; }
+        //bopParty can only be accessed through posts
+        //save id to client when successfully joined bopPartyChat
+        public int bopPartyId { get; set; }//bopParty groupchat id
         public List<int> belongingChatID { get; set; }//MeRightNow or other group chats
         public Dictionary<string, int> roomIDByTargetUser { get; set; }//key:other user's name, value:chat room ID. 2 users have each other's name as key, and value is same
     }

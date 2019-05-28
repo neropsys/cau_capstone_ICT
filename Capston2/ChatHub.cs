@@ -135,7 +135,7 @@ namespace Capston2
             string userId = Context.Request.Headers["userId"];
             string rightNowStr = Context.Request.Headers["rightNowStr"];
             string userNick = Context.Request.Headers["userNick"];
-
+            string _bopParty = Context.Request.Headers["bopParty"];
             var userInfo = UserContainer.gUserList.Where(x => x.userId == userId).FirstOrDefault();
             if (userInfo != null)
             {
@@ -150,6 +150,7 @@ namespace Capston2
                 connectionID = connectionID,
                 rightNowStr = "",
                 userNick = userNick,
+                bopPartyId = Int32.Parse(_bopParty),
                 belongingChatID = new List<int>(),
                 roomIDByTargetUser = new Dictionary<string, int>()
             };
