@@ -254,6 +254,7 @@ namespace Capston2
 
             if (gRightNowRoomID.TryGetValue(fromUserInfo.rightNowStr, out int? roomId) == false || roomId == null)
             {
+                Clients.Client(fromUserInfo.connectionID).onBopPartyGroupMsgFailed();
                 return;
             }
 

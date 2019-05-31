@@ -150,6 +150,10 @@ namespace Capston2
                     Clients.Client(user.connectionID).onBopPartyMsgReceived(strChatLog);
                 }
             }
+            else
+            {
+                Clients.Client(fromUserInfo.connectionID).onBopPartyGroupMsgFailed();
+            }
         }
         public void GetMsgByIndex(string fromUser, int index)
         {
