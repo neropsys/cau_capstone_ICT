@@ -20,5 +20,6 @@ namespace Capston2DataAccess
         public string title { get; set; }
         public string nickname { get; set; }
         public int id { get; set; }
+        public Nullable<int> type { get; set; }
     }
 }

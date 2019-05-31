@@ -25,17 +25,8 @@ namespace Capston2.Controllers
         SqlCommand cmd = new SqlCommand();
 
 
-        public class PostModel
-        {
-            public string residence { get; set; }
-            public string nickname { get; set; }
-            public string text { get; set; }
-            public string title { get; set; }
-        }
-        public class GetModel
-        {
-            public string residenceName { get; set; }
-        }
+
+       
         public class ReplyModel
         {
             public string nickName { get; set; }
@@ -155,7 +146,10 @@ namespace Capston2.Controllers
                 return responseMessage;
             }
         }
-
+        public class GetModel
+        {
+            public string residenceName { get; set; }
+        }
         [HttpGet]
         public HttpResponseMessage Get([FromUri]GetModel value)
         {
@@ -174,12 +168,54 @@ namespace Capston2.Controllers
                 return responseMessage;
             }
         }
+
+        public class PostModel
+        {
+            public string residence { get; set; }
+            public string nickname { get; set; }
+            public string text { get; set; }
+            public string title { get; set; }
+            public int type { get; set; }
+        }
         // POST api/values
         [HttpPost]
         public HttpResponseMessage Post([FromBody] PostModel value)
         {
             //TODO:check credential
             //TODO:check session state
+
+            if(value.type == 1)//bopParty type = 1
+            {
+                using(ResidenceEntities postTableEntity = new ResidenceEntities())
+                {
+                    var getPost = postTableEntity.RESIDENCE_POSTS.FirstOrDefault(x => x.nickname == value.nickname && x.type == 1);
+                    if(getPost != null)
+                    {
+                        var diff = DateTime.Now.Subtract(getPost.date);
+                        if(diff.TotalMinutes < 2)//2 minute
+                        {
+
+                            ResponseFormat responseFormat = new ResponseFormat();
+                            responseFormat.ret = true;
+                            responseFormat.reason = "DUPLICATE REQUEST";
+                            string jsonContent = JsonConvert.SerializeObject(responseFormat);
+
+
+                            var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
+                            responseMessage.Content = new StringContent(jsonContent,
+                                System.Text.Encoding.UTF8,
+                                "application/json");
+                            return responseMessage;
+                        }
+                        else
+                        {
+                            postTableEntity.RESIDENCE_POSTS.Remove(getPost);
+                            postTableEntity.SaveChanges();
+                        }
+                        
+                    }
+                }
+            }
             using (SqlConnection connection = new SqlConnection(cs))
             {
                 using (SqlCommand cmd = new SqlCommand("sp_post_to_residence_board", connection))
@@ -191,6 +227,7 @@ namespace Capston2.Controllers
                         cmd.Parameters.Add("@nickname", SqlDbType.VarChar, 50).Value = value.nickname;
                         cmd.Parameters.Add("@text", SqlDbType.VarChar).Value = value.text;
                         cmd.Parameters.Add("@title", SqlDbType.VarChar, 50).Value = value.title;
+                        cmd.Parameters.Add("@type", SqlDbType.Int).Value = value.type;
                         var returnParameter = cmd.Parameters.Add("@result", SqlDbType.Int);
                         cmd.Parameters["@result"].Direction = ParameterDirection.Output;
                         connection.Open();
