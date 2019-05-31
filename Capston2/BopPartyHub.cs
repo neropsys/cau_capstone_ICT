@@ -28,21 +28,26 @@ namespace Capston2
             UserContainer.gChatList[chatRoomID] = tuple;
             Clients.Client(fromUserInfo.connectionID).onBopChatCreated(chatRoomID);
         }
-        public void JoinBopParty(string fromUser, int bopPartyID)
+        public void JoinBopParty(string fromUser, string toUserID)
         {
             var fromUserInfo = UserContainer.gUserList.Find(x => x.userId.Equals(fromUser));
             if (fromUserInfo == null)
                 return;
 
-            if (UserContainer.gChatList.TryGetValue(bopPartyID, out var value))
+            var toUserInfo = UserContainer.gUserList.Find(x => x.userId.Equals(toUserID));
+            if (toUserInfo == null)
+                return;
+
+
+            if (UserContainer.gChatList.TryGetValue(toUserInfo.bopPartyId, out var value))
             {
-                fromUserInfo.bopPartyId = bopPartyID;
+                fromUserInfo.bopPartyId = toUserInfo.bopPartyId;
                 value.Item1.Add(fromUserInfo);
-                Clients.Client(fromUserInfo.connectionID).onJoinBopParty(bopPartyID);
+                Clients.Client(fromUserInfo.connectionID).onJoinBopParty(toUserInfo.bopPartyId);
             }
             else
             {
-                Clients.Client(fromUserInfo.connectionID).onJoinBopPartyFail(bopPartyID);
+                Clients.Client(fromUserInfo.connectionID).onJoinBopPartyFail(toUserInfo.bopPartyId);
             }
         }
         public void LeaveBopParty(string fromUser)
