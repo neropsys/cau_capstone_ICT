@@ -76,7 +76,7 @@ namespace Capston2.Controllers
             public string id { get; set; }
         }
         [HttpGet]
-        [Route("api/UserInfo{userId}")]
+        [Route("api/UserInfo/{userId}")]
         public HttpResponseMessage GetUserInfo(string userId)
         {
             using(capston_databaseEntities userDataEntites = new capston_databaseEntities())
