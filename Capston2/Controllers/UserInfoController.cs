@@ -28,7 +28,7 @@ namespace Capston2.Controllers
         }
         [HttpPost]
         [Route("api/UserInfo/{userId}")]
-        public HttpResponseMessage SetUserInfo(RequestFormat value, [FromUri]string userId)
+        public HttpResponseMessage SetUserInfo(RequestFormat value, string userId)
         {
             using (capston_databaseEntities userDataEntites = new capston_databaseEntities())
             {
@@ -65,7 +65,9 @@ namespace Capston2.Controllers
                 }
                 else
                 {
-                    return new HttpResponseMessage(HttpStatusCode.BadRequest);
+                    var retMsg = new HttpResponseMessage(HttpStatusCode.OK);
+                    retMsg.Content = new StringContent("Userinfo not found");
+                    return retMsg;
                 }
             }
         }
