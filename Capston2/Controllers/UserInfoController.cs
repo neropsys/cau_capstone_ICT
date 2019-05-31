@@ -75,7 +75,7 @@ namespace Capston2.Controllers
         }
         [HttpPost]
         [Route("api/UserInfo")]
-        public HttpResponseMessage GetUserInfo(RequestModel request)
+        public HttpResponseMessage GetUserInfo([FromBody]RequestModel request)
         {
             var userId = request.id;
 
@@ -120,7 +120,9 @@ namespace Capston2.Controllers
                 }
                 else
                 {
-                    return new HttpResponseMessage(HttpStatusCode.BadRequest);
+                    var retMsg = new HttpResponseMessage(HttpStatusCode.OK);
+                    retMsg.Content = new StringContent("Userinfo not found");
+                    return retMsg;
                 }
             }
         }
