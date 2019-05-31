@@ -75,12 +75,10 @@ namespace Capston2.Controllers
         {
             public string id { get; set; }
         }
-        [HttpPost]
-        [Route("api/UserInfo")]
-        public HttpResponseMessage GetUserInfo([FromBody]RequestModel request)
+        [HttpGet]
+        [Route("api/UserInfo{userId}")]
+        public HttpResponseMessage GetUserInfo(string userId)
         {
-            var userId = request.id;
-
             using(capston_databaseEntities userDataEntites = new capston_databaseEntities())
             {
                 var userInfo = userDataEntites.USER_INFO.FirstOrDefault(x => x.id == userId);
