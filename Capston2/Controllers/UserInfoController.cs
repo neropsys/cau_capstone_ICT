@@ -69,12 +69,15 @@ namespace Capston2.Controllers
                 }
             }
         }
-
+        public class RequestModel
+        {
+            public string id { get; set; }
+        }
         [HttpPost]
         [Route("api/UserInfo")]
-        public HttpResponseMessage GetUserInfo(HttpRequestMessage request)
+        public HttpResponseMessage GetUserInfo(RequestModel request)
         {
-            var userId = request.Content.ReadAsStringAsync().Result;
+            var userId = request.id;
 
             using(capston_databaseEntities userDataEntites = new capston_databaseEntities())
             {
