@@ -21,7 +21,7 @@ namespace Capston2
 
             bool ret = UserContainer.gChatList.ContainsKey(id);
 
-            Clients.Client(fromUserInfo.connectionID).OnGroupchatCheck(ret);
+            Clients.Client(fromUserInfo.connectionID).onGroupchatCheck(ret);
 
         }
         //call this function when posting bopParty article to RESIDENCE_POST is successful

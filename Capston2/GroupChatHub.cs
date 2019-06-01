@@ -28,7 +28,7 @@ namespace Capston2
 
             bool ret = UserContainer.gChatList.ContainsKey(id);
 
-            Clients.Client(fromUserInfo.connectionID).OnGroupchatCheck(ret);
+            Clients.Client(fromUserInfo.connectionID).onGroupchatCheck(ret);
         }
 
         void JoinRightNowRoom(string fromUser, string roomName)
