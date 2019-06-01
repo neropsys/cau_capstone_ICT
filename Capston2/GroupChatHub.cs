@@ -127,7 +127,7 @@ namespace Capston2
                 if (userList.Count < MIN_MEMBER_FOR_GROUPCHAT)
                 {
                     DeleteGroupChat(roomId.Value, ref userList);
-
+                    gRightNowRoomID.Remove(fromUserInfo.rightNowStr);
                 }
 
             }
