@@ -20,6 +20,17 @@ namespace Capston2
             Clients.All.hello();
         }
 
+        public void CheckGroupchatExists(string fromUser, int id)
+        {
+            var fromUserInfo = UserContainer.gUserList.Find(x => x.userId.Equals(fromUser));
+            if (fromUserInfo == null)
+                return;
+
+            bool ret = UserContainer.gChatList.ContainsKey(id);
+
+            Clients.Client(fromUserInfo.connectionID).OnGroupchatCheck(ret);
+        }
+
         void JoinRightNowRoom(string fromUser, string roomName)
         {
             var fromUserInfo = UserContainer.gUserList.Find(x => x.userId.Equals(fromUser));
