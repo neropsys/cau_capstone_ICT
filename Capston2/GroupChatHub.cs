@@ -277,7 +277,7 @@ namespace Capston2
                 userId = fromUserInfo.userId,
                 index = _index,
                 userNick = fromUserInfo.userNick,
-                time = DateTime.Now.ToString("s")
+                time = DateTime.Now.AddHours(9).ToString("s")
             };
             roomInfo.Item2.Add(newChatLog);
 

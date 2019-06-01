@@ -154,7 +154,7 @@ namespace Capston2
                 {
                     index = value.Item2.Count,
                     text = msg,
-                    time = DateTime.Now.ToString("s"),
+                    time = DateTime.Now.AddHours(9).ToString("s"),
                     userId = fromUserInfo.userId,
                     userNick = fromUserInfo.userNick
                 };

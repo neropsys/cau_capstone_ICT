@@ -118,7 +118,7 @@ namespace Capston2
                 text = message,
                 index = UserContainer.gChatList[chatRoomID].Item2.Count,
                 userNick = fromUserInfo.userNick,
-                time = DateTime.Now.ToString("s")
+                time = DateTime.Now.AddHours(9).ToString("s")
             };
             UserContainer.gChatList[chatRoomID].Item2.Add(chatLog);
 

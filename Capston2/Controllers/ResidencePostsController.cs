@@ -100,7 +100,7 @@ namespace Capston2.Controllers
                                 replyindex = lastReply != null ? lastReply.replyindex + 1 : 0,
                                 text = format.text,
                                 userid = format.userId,
-                                time = DateTime.Now
+                                time = DateTime.Now.AddHours(9)
                             });
 
                             replyEntities.SaveChanges();
