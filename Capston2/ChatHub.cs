@@ -134,7 +134,7 @@ namespace Capston2
             var connectionID = Context.ConnectionId;
             string userId = Context.Request.Headers["userId"];
             string rightNowStr = Context.Request.Headers["rightNowStr"];
-            string userNick = Context.Request.Headers["userNick"];
+            string userNick = Context.QueryString["userNick"];
             string _bopParty = Context.Request.Headers["bopParty"];
             var userInfo = UserContainer.gUserList.Where(x => x.userId == userId).FirstOrDefault();
             if (userInfo != null)

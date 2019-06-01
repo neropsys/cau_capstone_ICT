@@ -93,13 +93,13 @@ namespace Client
 
         bool connect(string userName, string rightNowStr, string userNick, string bopParty)
         {
-            connection = new HubConnection("http://localhost:13458/");
+            string _userNick = "userNick=" + userNick;
+            connection = new HubConnection("http://localhost:13458/", _userNick);
             //userName = EncodeUtf16ToUtf8.Utf16ToUtf8(userName);
             //rightNowStr = EncodeUtf16ToUtf8.Utf16ToUtf8(rightNowStr);
             //connection.
             connection. Headers.Add("userId", userName);
             connection.Headers.Add("rightNowStr", rightNowStr);
-            connection.Headers.Add("userNick", userNick);
             connection.Headers.Add("bopParty", bopParty);
             chat = connection.CreateHubProxy("ChatHub");
             groupChat = connection.CreateHubProxy("GroupChatHub");
