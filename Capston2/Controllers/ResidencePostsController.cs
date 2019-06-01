@@ -138,7 +138,7 @@ namespace Capston2.Controllers
             using (capston_postreplyconn replyEntities = new capston_postreplyconn())
             {
                 var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
-                var replyList = replyEntities.POST_REPLIES.Where(x => x.postid == postId).ToArray();
+                var replyList = replyEntities.POST_REPLIES.Where(x => x.postid == postId).OrderBy(x => x.replyindex).ToArray();
                 string replyListJson = JsonConvert.SerializeObject(replyList);
                 responseMessage.Content = new StringContent(replyListJson,
                                    System.Text.Encoding.UTF8,
