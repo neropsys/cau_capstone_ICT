@@ -18,6 +18,7 @@ namespace Capston2.Controllers
             public string residence { get; set; }
             public string major { get; set; }
             public string hobby { get; set; }
+            public string userNick { get; set; }
         }
         public class RequestFormat
         {
@@ -79,11 +80,11 @@ namespace Capston2.Controllers
         [Route("api/UserInfo/{userNick}")]
         public HttpResponseMessage GetUserInfo(string userNick)
         {
-            using(capston_databaseEntities userDataEntites = new capston_databaseEntities())
+            using (capston_databaseEntities userDataEntites = new capston_databaseEntities())
             {
                 var userInfo = userDataEntites.USER_INFO.FirstOrDefault(x => x.nickname == userNick);
-                
-                if(userInfo != null)
+
+                if (userInfo != null)
                 {
                     using (capston_database_PrivacyEntities privacyEntities = new capston_database_PrivacyEntities())
                     {
@@ -91,10 +92,10 @@ namespace Capston2.Controllers
                         ResponseFormat retValue = new ResponseFormat();
                         var privacySetting = privacyEntities.USER_INFO_PRIVACY.FirstOrDefault(x => x.id == userInfo.id);
 
-                        if(privacySetting != null)
+                        if (privacySetting != null)
                         {
                             //1:public. 2:friend only. 0 or null:hidden. only 1 or null for now
-                           if(privacySetting.dateofbirth.HasValue)
+                            if (privacySetting.dateofbirth.HasValue)
                             {
                                 retValue.dateofbirth = userInfo.dateofbirth;
                             }
@@ -124,6 +125,56 @@ namespace Capston2.Controllers
                     retMsg.Content = new StringContent("Userinfo not found");
                     return retMsg;
                 }
+            }
+        }
+        [HttpPost]
+        [Route("api/UserInfo")]
+        public HttpResponseMessage GetUserInfo([FromBody]List<string> userNickList)
+        {
+            using (capston_databaseEntities userDataEntites = new capston_databaseEntities())
+            {
+                using (capston_database_PrivacyEntities privacyEntities = new capston_database_PrivacyEntities())
+                {
+                    List<ResponseFormat> retList = new List<ResponseFormat>();
+                    foreach (string userNick in userNickList)
+                    {
+                        var userInfo = userDataEntites.USER_INFO.FirstOrDefault(x => x.nickname == userNick);
+
+                        if (userInfo != null)
+                        {
+                            var privacySetting = privacyEntities.USER_INFO_PRIVACY.FirstOrDefault(x => x.id == userInfo.id);
+                            ResponseFormat retValue = new ResponseFormat();
+                            if (privacySetting != null)
+                            {
+                                retValue.userNick = userInfo.nickname;
+                                //1:public. 2:friend only. 0 or null:hidden. only 1 or null for now
+                                if (privacySetting.dateofbirth.HasValue)
+                                {
+                                    retValue.dateofbirth = userInfo.dateofbirth;
+                                }
+                                if (privacySetting.hobby.HasValue)
+                                {
+                                    retValue.hobby = userInfo.hobby;
+                                }
+                                if (privacySetting.major.HasValue)
+                                {
+                                    retValue.major = userInfo.major;
+                                }
+                                if (privacySetting.residence.HasValue)
+                                {
+                                    retValue.residence = userInfo.residence;
+                                }
+                            }
+                            retList.Add(retValue);
+                        }
+                    }
+                    HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
+                    string jsonContent = JsonConvert.SerializeObject(retList);
+                    response.Content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+                    return response;
+
+                }
+
             }
         }
     }
