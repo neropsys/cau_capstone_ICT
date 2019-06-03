@@ -183,5 +183,13 @@ namespace Capston2
                 Clients.Client(fromUserInfo.connectionID).updateGroupChatByIndex(json);
             }
         }
+        public void GetMyBopPartyID(string fromUserId)
+        {
+            var fromUserInfo = UserContainer.gUserList.Find(x => x.userId.Equals(fromUserId));
+            if (fromUserInfo == null)
+                return;
+            Clients.Client(fromUserInfo.connectionID).onMyBopParty(fromUserInfo.bopPartyId);
+        }
     }
+    
 }

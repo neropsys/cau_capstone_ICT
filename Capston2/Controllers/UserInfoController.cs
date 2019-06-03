@@ -144,9 +144,9 @@ namespace Capston2.Controllers
                         {
                             var privacySetting = privacyEntities.USER_INFO_PRIVACY.FirstOrDefault(x => x.id == userInfo.id);
                             ResponseFormat retValue = new ResponseFormat();
+                            retValue.userNick = userInfo.nickname;
                             if (privacySetting != null)
                             {
-                                retValue.userNick = userInfo.nickname;
                                 //1:public. 2:friend only. 0 or null:hidden. only 1 or null for now
                                 if (privacySetting.dateofbirth.HasValue)
                                 {

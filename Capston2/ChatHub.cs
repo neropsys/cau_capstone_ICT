@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
-
+using Capston2DataAccess;
 namespace Capston2
 {
     public class ChatHub : Hub
@@ -134,8 +134,13 @@ namespace Capston2
             var connectionID = Context.ConnectionId;
             string userId = Context.Request.Headers["userId"];
             string rightNowStr = Context.Request.Headers["rightNowStr"];
-            string userNick = Context.QueryString["userNick"];
+            
             string _bopParty = Context.Request.Headers["bopParty"];
+            string userNick = null;
+            using (capston_databaseEntities userDataEntites = new capston_databaseEntities())
+            {
+                userNick = userDataEntites.USER_INFO.First(x => x.id == userId).nickname;
+            }
             var userInfo = UserContainer.gUserList.Where(x => x.userId == userId).FirstOrDefault();
             if (userInfo != null)
             {
@@ -144,17 +149,20 @@ namespace Capston2
                 Clients.All.getUserList(_json);
                 return base.OnConnected();
             }
-            Users user = new Users()
+            else
             {
-                userId = userId,
-                connectionID = connectionID,
-                rightNowStr = "",
-                userNick = userNick,
-                bopPartyId = Int32.Parse(_bopParty),
-                belongingChatID = new List<int>(),
-                roomIDByTargetUser = new Dictionary<string, int>()
-            };
-            UserContainer.gUserList.Add(user); //add the connection user to the list
+                Users user = new Users()
+                {
+                    userId = userId,
+                    connectionID = connectionID,
+                    rightNowStr = "",
+                    userNick = userNick,
+                    bopPartyId = Int32.Parse(_bopParty),
+                    belongingChatID = new List<int>(),
+                    roomIDByTargetUser = new Dictionary<string, int>()
+                };
+                UserContainer.gUserList.Add(user); //add the connection user to the list
+            }
             string json = JsonConvert.SerializeObject(UserContainer.gUserList); //send to client
             Clients.All.getUserList(json);
             return base.OnConnected();
