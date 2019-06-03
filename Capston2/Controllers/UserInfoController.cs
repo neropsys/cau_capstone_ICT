@@ -177,5 +177,67 @@ namespace Capston2.Controllers
 
             }
         }
+
+        public class RecommendFormat
+        {
+            public string residence { get; set; }
+            public string hobby { get; set; }
+            public string major { get; set; }
+        }
+        [HttpPost]
+        [Route("api/friend/recommend")]
+        public HttpResponseMessage FriendRecommend([FromBody]RecommendFormat value)
+        {
+            using (capston_databaseEntities userDataEntites = new capston_databaseEntities())
+            {
+                var userList = userDataEntites.USER_INFO.Where(x => x.residence == value.residence || x.hobby == value.hobby || x.major == value.major).ToList();
+
+                using (capston_database_PrivacyEntities privacyEntities = new capston_database_PrivacyEntities())
+                {
+                    List<ResponseFormat> retList = new List<ResponseFormat>();
+                    foreach (var user in userList)
+                    {
+                        var privacySetting = privacyEntities.USER_INFO_PRIVACY.FirstOrDefault(x => x.id == user.id);
+
+                        if ((user.residence == value.residence && privacySetting.residence == null) ||
+                              (user.hobby == value.hobby && privacySetting.hobby == null) ||
+                              (user.major == value.major && privacySetting.major == null))
+                        {
+                            continue;
+                        }
+
+                        ResponseFormat retValue = new ResponseFormat();
+                        retValue.userNick = user.nickname;
+                        if (privacySetting != null)
+                        {
+                           
+                            //1:public. 2:friend only. 0 or null:hidden. only 1 or null for now
+                            if (privacySetting.dateofbirth.HasValue)
+                            {
+                                retValue.dateofbirth = user.dateofbirth;
+                            }
+                            if (privacySetting.hobby.HasValue)
+                            {
+                                retValue.hobby = user.hobby;
+                            }
+                            if (privacySetting.major.HasValue)
+                            {
+                                retValue.major = user.major;
+                            }
+                            if (privacySetting.residence.HasValue)
+                            {
+                                retValue.residence = user.residence;
+                            }
+                        }
+                        retList.Add(retValue);
+                    }
+                    HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
+                    string jsonContent = JsonConvert.SerializeObject(retList);
+                    response.Content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+                    return response;
+                }
+            }
+        }
+
     }
 }
