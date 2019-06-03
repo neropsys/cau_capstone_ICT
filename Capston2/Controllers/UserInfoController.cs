@@ -198,33 +198,33 @@ namespace Capston2.Controllers
                     foreach (var user in userList)
                     {
                         var privacySetting = privacyEntities.USER_INFO_PRIVACY.FirstOrDefault(x => x.id == user.id);
+                        if (privacySetting == null)
+                            continue;
+                        if ((user.residence == value.residence && privacySetting.residence == null) ||
+                          (user.hobby == value.hobby && privacySetting.hobby == null) ||
+                          (user.major == value.major && privacySetting.major == null))
+                        {
+                            continue;
+                        }
                         ResponseFormat retValue = new ResponseFormat();
                         retValue.userNick = user.nickname;
-                        if (privacySetting != null)
+                       
+                        //1:public. 2:friend only. 0 or null:hidden. only 1 or null for now
+                        if (privacySetting.dateofbirth.HasValue)
                         {
-                            if ((user.residence == value.residence && privacySetting.residence == null) ||
-                               (user.hobby == value.hobby && privacySetting.hobby == null) ||
-                               (user.major == value.major && privacySetting.major == null))
-                            {
-                                continue;
-                            }
-                            //1:public. 2:friend only. 0 or null:hidden. only 1 or null for now
-                            if (privacySetting.dateofbirth.HasValue)
-                            {
-                                retValue.dateofbirth = user.dateofbirth;
-                            }
-                            if (privacySetting.hobby.HasValue)
-                            {
-                                retValue.hobby = user.hobby;
-                            }
-                            if (privacySetting.major.HasValue)
-                            {
-                                retValue.major = user.major;
-                            }
-                            if (privacySetting.residence.HasValue)
-                            {
-                                retValue.residence = user.residence;
-                            }
+                            retValue.dateofbirth = user.dateofbirth;
+                        }
+                        if (privacySetting.hobby.HasValue)
+                        {
+                            retValue.hobby = user.hobby;
+                        }
+                        if (privacySetting.major.HasValue)
+                        {
+                            retValue.major = user.major;
+                        }
+                        if (privacySetting.residence.HasValue)
+                        {
+                            retValue.residence = user.residence;
                         }
                         retList.Add(retValue);
                     }
