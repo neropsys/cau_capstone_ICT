@@ -76,12 +76,12 @@ namespace Capston2.Controllers
             public string id { get; set; }
         }
         [HttpGet]
-        [Route("api/UserInfo/{userId}")]
-        public HttpResponseMessage GetUserInfo(string userId)
+        [Route("api/UserInfo/{userNick}")]
+        public HttpResponseMessage GetUserInfo(string userNick)
         {
             using(capston_databaseEntities userDataEntites = new capston_databaseEntities())
             {
-                var userInfo = userDataEntites.USER_INFO.FirstOrDefault(x => x.id == userId);
+                var userInfo = userDataEntites.USER_INFO.FirstOrDefault(x => x.nickname == userNick);
                 
                 if(userInfo != null)
                 {
@@ -89,7 +89,7 @@ namespace Capston2.Controllers
                     {
                         HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
                         ResponseFormat retValue = new ResponseFormat();
-                        var privacySetting = privacyEntities.USER_INFO_PRIVACY.FirstOrDefault(x => x.id == userId);
+                        var privacySetting = privacyEntities.USER_INFO_PRIVACY.FirstOrDefault(x => x.id == userInfo.id);
 
                         if(privacySetting != null)
                         {

@@ -191,8 +191,8 @@ namespace Capston2.Controllers
                     var getPost = postTableEntity.RESIDENCE_POSTS.FirstOrDefault(x => x.nickname == value.nickname && x.type == 1);
                     if(getPost != null)
                     {
-                        var diff = DateTime.Now.Subtract(getPost.date);
-                        if(diff.TotalMinutes < 2)//2 minute
+                        var diff = DateTime.Now.AddHours(9).Subtract(getPost.date);
+                        if(diff.Minutes < 2)//2 minute
                         {
 
                             ResponseFormat responseFormat = new ResponseFormat();

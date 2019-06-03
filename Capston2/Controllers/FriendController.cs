@@ -67,7 +67,7 @@ namespace Capston2.Controllers
         //get pending requests
         [HttpGet]
         [Route("api/{userId}/friend/requests")]
-        public string GetRequests(string userId)
+        public HttpResponseMessage GetRequests(string userId)
         {
             using (capston_databaseEntities userDataEntities = new capston_databaseEntities())
             {
@@ -87,8 +87,13 @@ namespace Capston2.Controllers
                             ret.Add(senderInfo.nickname);
                         }
                     }
-                    string json = JsonConvert.SerializeObject(ret);
-                    return json;
+                    var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
+
+                    string jsonContent = JsonConvert.SerializeObject(ret);
+                    responseMessage.Content = new StringContent(jsonContent,
+                         System.Text.Encoding.UTF8,
+                         "application/json");
+                    return responseMessage;
                 }
             }
         }
