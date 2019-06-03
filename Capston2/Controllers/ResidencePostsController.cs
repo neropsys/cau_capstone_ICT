@@ -26,7 +26,7 @@ namespace Capston2.Controllers
 
 
 
-       
+
         public class ReplyModel
         {
             public string nickName { get; set; }
@@ -55,7 +55,7 @@ namespace Capston2.Controllers
                     {
                         var replyTable = replyEntities.POST_REPLIES;
                         var targetReply = replyTable.FirstOrDefault(x => x.postid == postId && x.replyindex == format.replyId);
-                        if(targetReply != null)
+                        if (targetReply != null)
                         {
                             replyTable.Remove(targetReply);
 
@@ -107,7 +107,7 @@ namespace Capston2.Controllers
                         }
                         return new HttpResponseMessage(HttpStatusCode.OK);
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         var responseMessage = new HttpResponseMessage(HttpStatusCode.InternalServerError);
                         responseMessage.Content = new StringContent(e.Message,
@@ -118,7 +118,7 @@ namespace Capston2.Controllers
                 }
                 return new HttpResponseMessage(HttpStatusCode.BadRequest);
             }
-            
+
         }
         [HttpGet]
         [Route("api/posts/replies/{postId}")]
@@ -184,15 +184,15 @@ namespace Capston2.Controllers
             //TODO:check credential
             //TODO:check session state
 
-            if(value.type == 1)//bopParty type = 1
+            if (value.type == 1)//bopParty type = 1
             {
-                using(ResidenceEntities postTableEntity = new ResidenceEntities())
+                using (ResidenceEntities postTableEntity = new ResidenceEntities())
                 {
                     var getPost = postTableEntity.RESIDENCE_POSTS.FirstOrDefault(x => x.nickname == value.nickname && x.type == 1);
-                    if(getPost != null)
+                    if (getPost != null)
                     {
                         var diff = DateTime.Now.AddHours(9).Subtract(getPost.date);
-                        if(diff.Minutes < 2)//2 minute
+                        if (diff.Minutes < 2)//2 minute
                         {
 
                             ResponseFormat responseFormat = new ResponseFormat();
@@ -212,7 +212,7 @@ namespace Capston2.Controllers
                             postTableEntity.RESIDENCE_POSTS.Remove(getPost);
                             postTableEntity.SaveChanges();
                         }
-                        
+
                     }
                 }
             }
@@ -262,6 +262,69 @@ namespace Capston2.Controllers
 
                     }
                 }
+            }
+
+        }
+
+        public class ModifyModel
+        {
+            public string title { get; set; }
+            public string text { get; set; }
+            public int id { get; set; }
+        }
+
+        [HttpPost]
+        [Route("api/posts/edit")]
+        public HttpResponseMessage EditPost([FromBody] ModifyModel value)
+        {
+            using (ResidenceEntities postTableEntity = new ResidenceEntities())
+            {
+                var getPost = postTableEntity.RESIDENCE_POSTS.FirstOrDefault(x => x.id == value.id);
+                if (getPost != null)
+                {
+                    getPost.title = value.title;
+                    getPost.text = value.text;
+                    postTableEntity.SaveChanges();
+                    return new HttpResponseMessage(HttpStatusCode.OK);
+                }
+                else
+                {
+                    ResponseFormat responseFormat = new ResponseFormat();
+                    var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
+                    responseFormat.ret = false;
+                    responseFormat.reason = "POST_ID_NOT_FOUND";
+                    return responseMessage;
+                }
+
+            }
+        }
+        public class DeleteModel
+        {
+            public string  userId { get; set; }
+            public int postId { get; set; }
+        }
+        [HttpPost]
+        [Route("api/posts/delete")]
+        public HttpResponseMessage DeletePost([FromBody] DeleteModel value)
+        {
+            using (ResidenceEntities postTableEntity = new ResidenceEntities())
+            {
+                var getPost = postTableEntity.RESIDENCE_POSTS.FirstOrDefault(x => x.id == value.postId);
+                if (getPost != null)
+                {
+                    postTableEntity.RESIDENCE_POSTS.Remove(getPost);
+                    postTableEntity.SaveChanges();
+                    return new HttpResponseMessage(HttpStatusCode.OK);
+                }
+                else
+                {
+                    ResponseFormat responseFormat = new ResponseFormat();
+                    var responseMessage = new HttpResponseMessage(HttpStatusCode.OK);
+                    responseFormat.ret = false;
+                    responseFormat.reason = "POST_ID_NOT_FOUND";
+                    return responseMessage;
+                }
+
             }
 
         }

@@ -38,13 +38,13 @@ namespace Capston2
             UserContainer.gChatList[chatRoomID] = tuple;
             Clients.Client(fromUserInfo.connectionID).onBopChatCreated(chatRoomID);
         }
-        public void JoinBopParty(string fromUser, string toUserID)
+        public void JoinBopParty(string fromUser, string toUserNick)
         {
             var fromUserInfo = UserContainer.gUserList.Find(x => x.userId.Equals(fromUser));
             if (fromUserInfo == null)
                 return;
 
-            var toUserInfo = UserContainer.gUserList.Find(x => x.userId.Equals(toUserID));
+            var toUserInfo = UserContainer.gUserList.Find(x => x.userNick.Equals(toUserNick));
             if (toUserInfo == null)
                 return;
 
